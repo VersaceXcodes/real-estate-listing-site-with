@@ -512,6 +512,8 @@ export const useAppStore = create<AppState>()(
           
           const { user, token } = response.data;
           
+          // CRITICAL: Set is_loading to false IMMEDIATELY upon successful registration
+          // This ensures the UI updates even if subsequent calls fail
           set((state) => ({
             authentication_state: {
               ...state.authentication_state,
@@ -529,6 +531,7 @@ export const useAppStore = create<AppState>()(
           }));
           
           // Load user data after registration (non-blocking, with error handling)
+          // This happens AFTER setting is_loading to false to prevent UI freeze
           setTimeout(() => {
             get().load_user_notification_preferences().catch((error) => {
               console.error('Failed to load notification preferences after registration:', error);

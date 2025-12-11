@@ -235,13 +235,14 @@ const GV_AuthModal: React.FC<AuthModalProps> = ({
         phone_number: phoneNumber || null,
       });
       
-      // Success - modal will close
+      // Success - close modal and call success callback
       handleClose();
       if (onSuccess) onSuccess();
       
     } catch (error) {
-      // Error is handled in store
+      // Error is handled in store and displayed via errorMessage
       console.error('Registration failed:', error);
+      // Don't close the modal on error - let user see the error and retry
     }
   };
 
