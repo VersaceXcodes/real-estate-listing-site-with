@@ -3,6 +3,32 @@ import { persist } from 'zustand/middleware';
 import axios from 'axios';
 
 // ============================================================================
+// API CONFIGURATION
+// ============================================================================
+
+/**
+ * Get the API base URL
+ * - In development: use VITE_API_BASE_URL or http://localhost:3000
+ * - In production: use empty string (relative URLs) if not specified
+ */
+const getApiBaseUrl = (): string => {
+  // Check if VITE_API_BASE_URL is defined
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  // In development mode, default to localhost
+  if (import.meta.env.DEV) {
+    return 'http://localhost:3000';
+  }
+  
+  // In production, use empty string for relative URLs (same origin)
+  return '';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// ============================================================================
 // TYPES & INTERFACES (matching Zod schemas exactly)
 // ============================================================================
 
@@ -277,7 +303,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/login`,
+            `${API_BASE_URL}/api/auth/login`,
             { email, password },
             { 
               headers: { 'Content-Type': 'application/json' },
@@ -303,13 +329,15 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
-          // Load user-specific data after login (non-blocking)
-          get().load_favorites().catch((error) => {
-            console.error('Failed to load favorites after login:', error);
-          });
-          get().load_user_notification_preferences().catch((error) => {
-            console.error('Failed to load notification preferences after login:', error);
-          });
+          // Load user-specific data after login (non-blocking, fire-and-forget)
+          setTimeout(() => {
+            get().load_favorites().catch((error) => {
+              console.error('Failed to load favorites after login:', error);
+            });
+            get().load_user_notification_preferences().catch((error) => {
+              console.error('Failed to load notification preferences after login:', error);
+            });
+          }, 0);
           
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Login failed';
@@ -347,7 +375,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/agent/login`,
+            `${API_BASE_URL}/api/auth/agent/login`,
             { email, password },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -415,7 +443,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/admin/login`,
+            `${API_BASE_URL}/api/auth/admin/login`,
             { email, password },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -474,7 +502,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/register`,
+            `${API_BASE_URL}/api/auth/register`,
             data,
             { 
               headers: { 'Content-Type': 'application/json' },
@@ -501,10 +529,12 @@ export const useAppStore = create<AppState>()(
           }));
           
           // Load user data after registration (non-blocking, with error handling)
-          get().load_user_notification_preferences().catch((error) => {
-            console.error('Failed to load notification preferences after registration:', error);
-            // Continue anyway - user is registered and logged in
-          });
+          setTimeout(() => {
+            get().load_user_notification_preferences().catch((error) => {
+              console.error('Failed to load notification preferences after registration:', error);
+              // Continue anyway - user is registered and logged in
+            });
+          }, 0);
           
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Registration failed';
@@ -542,7 +572,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/agent/register`,
+            `${API_BASE_URL}/api/auth/agent/register`,
             data,
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -599,7 +629,7 @@ export const useAppStore = create<AppState>()(
         // Optional: Call logout endpoint (fire-and-forget)
         if (token) {
           axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/logout`,
+            `${API_BASE_URL}/api/auth/logout`,
             {},
             {
               headers: {
@@ -672,7 +702,7 @@ export const useAppStore = create<AppState>()(
           // Verify user token
           if (user_token) {
             const response = await axios.get(
-              `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/users/me`,
+              `${API_BASE_URL}/api/users/me`,
               {
                 headers: {
                   'Authorization': `Bearer ${user_token}`
@@ -707,7 +737,7 @@ export const useAppStore = create<AppState>()(
           // Verify agent token
           if (agent_token) {
             const response = await axios.get(
-              `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/agents/me`,
+              `${API_BASE_URL}/api/agents/me`,
               {
                 headers: {
                   'Authorization': `Bearer ${agent_token}`
@@ -800,7 +830,7 @@ export const useAppStore = create<AppState>()(
       verify_email: async (token: string) => {
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/verify-email`,
+            `${API_BASE_URL}/api/auth/verify-email`,
             { token },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -822,7 +852,7 @@ export const useAppStore = create<AppState>()(
       request_password_reset: async (email: string) => {
         try {
           await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/forgot-password`,
+            `${API_BASE_URL}/api/auth/forgot-password`,
             { email },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -839,7 +869,7 @@ export const useAppStore = create<AppState>()(
       reset_password: async (token: string, new_password: string) => {
         try {
           await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/reset-password`,
+            `${API_BASE_URL}/api/auth/reset-password`,
             { token, new_password },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -863,7 +893,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/change-password`,
+            `${API_BASE_URL}/api/auth/change-password`,
             { current_password, new_password },
             {
               headers: {
@@ -913,7 +943,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/favorites`,
+            `${API_BASE_URL}/api/favorites`,
             { property_id },
             {
               headers: {
@@ -962,7 +992,7 @@ export const useAppStore = create<AppState>()(
           // Note: API uses property_id, but we need favorite_id
           // Views should pass the correct identifier
           await axios.delete(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/favorites/${property_id}`,
+            `${API_BASE_URL}/api/favorites/${property_id}`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -1005,7 +1035,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/favorites`,
+            `${API_BASE_URL}/api/favorites`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -1061,7 +1091,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/users/notification-preferences`,
+            `${API_BASE_URL}/api/users/notification-preferences`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -1098,7 +1128,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/users/notification-preferences`,
+            `${API_BASE_URL}/api/users/notification-preferences`,
             preferences,
             {
               headers: {
@@ -1133,7 +1163,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/agents/notification-preferences`,
+            `${API_BASE_URL}/api/agents/notification-preferences`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -1166,7 +1196,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/agents/notification-preferences`,
+            `${API_BASE_URL}/api/agents/notification-preferences`,
             preferences,
             {
               headers: {
@@ -1208,7 +1238,7 @@ export const useAppStore = create<AppState>()(
         
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/agents/dashboard/stats`,
+            `${API_BASE_URL}/api/agents/dashboard/stats`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`

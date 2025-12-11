@@ -2,7 +2,7 @@
 // Comprehensive unit and integration tests
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
-import { app, pool } from './server.ts';
+import { app, pool } from './server.js';
 // ===========================
 // TEST UTILITIES & SETUP
 // ===========================
