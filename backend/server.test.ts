@@ -3,7 +3,7 @@
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import request from 'supertest';
-import { app, pool } from './server.ts';
+import { app, pool } from './server.js';
 
 // ===========================
 // TEST UTILITIES & SETUP

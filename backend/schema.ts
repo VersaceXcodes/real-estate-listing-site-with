@@ -1204,7 +1204,7 @@ export const registerUserInputSchema = z.object({
   email: z.string().email().min(1).max(255),
   password: z.string().min(8).max(100),
   full_name: z.string().min(1).max(255),
-  phone_number: z.string().max(20).nullable()
+  phone_number: z.string().max(20).nullable().optional()
 });
 
 export const registerAgentInputSchema = z.object({

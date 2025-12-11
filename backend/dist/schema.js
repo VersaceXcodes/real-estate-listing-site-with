@@ -322,7 +322,10 @@ export const searchPropertyInputSchema = z.object({
     agent_id: z.string().optional(),
     listing_type: z.enum(['sale', 'rent']).optional(),
     property_type: z.array(z.enum(['house', 'condo', 'townhouse', 'apartment', 'land', 'commercial'])).optional(),
-    status: z.array(z.enum(['draft', 'active', 'pending', 'sold', 'rented', 'inactive'])).optional(),
+    status: z.union([
+        z.enum(['draft', 'active', 'pending', 'sold', 'rented', 'inactive']),
+        z.array(z.enum(['draft', 'active', 'pending', 'sold', 'rented', 'inactive']))
+    ]).optional().transform(val => val ? (Array.isArray(val) ? val : [val]) : undefined),
     min_price: z.coerce.number().nonnegative().optional(),
     max_price: z.coerce.number().positive().optional(),
     city: z.string().optional(),
@@ -347,7 +350,7 @@ export const searchPropertyInputSchema = z.object({
     is_featured: z.coerce.boolean().optional(),
     limit: z.coerce.number().int().positive().default(20),
     offset: z.coerce.number().int().nonnegative().default(0),
-    sort_by: z.enum(['price', 'created_at', 'updated_at', 'bedrooms', 'square_footage', 'view_count']).default('created_at'),
+    sort_by: z.enum(['price', 'created_at', 'updated_at', 'bedrooms', 'square_footage', 'view_count', 'featured_order']).default('created_at'),
     sort_order: z.enum(['asc', 'desc']).default('desc')
 });
 // =============================================
@@ -1006,7 +1009,7 @@ export const registerUserInputSchema = z.object({
     email: z.string().email().min(1).max(255),
     password: z.string().min(8).max(100),
     full_name: z.string().min(1).max(255),
-    phone_number: z.string().max(20).nullable()
+    phone_number: z.string().max(20).nullable().optional()
 });
 export const registerAgentInputSchema = z.object({
     email: z.string().email().min(1).max(255),
@@ -1063,3 +1066,4 @@ export const authResponseSchema = z.object({
         message: z.string()
     }).nullable()
 });
+//# sourceMappingURL=schema.js.map

@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { Pool } from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import morgan from 'morgan';
+import bcrypt from 'bcryptjs';
 import { loginInputSchema, registerUserInputSchema, registerAgentInputSchema, changePasswordInputSchema, resetPasswordInputSchema, verifyEmailInputSchema, updateUserInputSchema, createPropertyInputSchema, searchPropertyInputSchema, createInquiryInputSchema, createFavoriteInputSchema } from './schema.js';
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -98,9 +99,11 @@ app.post('/api/auth/register', async (req, res) => {
         const user_id = uuidv4();
         const email_verification_token = uuidv4();
         const now = new Date().toISOString();
+        // Hash the password before storing
+        const password_hash = await bcrypt.hash(validated.password, 10);
         const result = await pool.query(`INSERT INTO users (user_id, email, password_hash, full_name, phone_number, email_verified, 
        email_verification_token, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, false, $6, $7, $8) RETURNING *`, [user_id, validated.email.toLowerCase(), validated.password, validated.full_name,
+       VALUES ($1, $2, $3, $4, $5, false, $6, $7, $8) RETURNING *`, [user_id, validated.email.toLowerCase(), password_hash, validated.full_name,
             validated.phone_number || null, email_verification_token, now, now]);
         await pool.query(`INSERT INTO user_notification_preferences (preference_id, user_id, saved_property_price_change, 
        saved_property_status_change, new_matching_properties, agent_reply_received, platform_updates, 
@@ -121,6 +124,7 @@ app.post('/api/auth/register', async (req, res) => {
         });
     }
     catch (error) {
+        console.error('Registration error:', error);
         if (error.name === 'ZodError') {
             return res.status(400).json(createErrorResponse('Validation error', error, 'VALIDATION_ERROR'));
         }
@@ -130,7 +134,7 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
     try {
         const validated = loginInputSchema.parse(req.body);
-        const result = await pool.query('SELECT * FROM users WHERE email = $1 AND password_hash = $2', [validated.email.toLowerCase(), validated.password]);
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [validated.email.toLowerCase()]);
         if (result.rows.length === 0) {
             return res.status(401).json({
                 success: false,
@@ -144,6 +148,20 @@ app.post('/api/auth/login', async (req, res) => {
             });
         }
         const user = result.rows[0];
+        // Compare password with hashed password
+        const passwordValid = await bcrypt.compare(validated.password, user.password_hash);
+        if (!passwordValid) {
+            return res.status(401).json({
+                success: false,
+                token: null,
+                user: null,
+                agent: null,
+                error: {
+                    code: 'INVALID_CREDENTIALS',
+                    message: 'Invalid email or password'
+                }
+            });
+        }
         const token = jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '7d' });
         const now = new Date().toISOString();
         await pool.query(`UPDATE users SET updated_at = $1 WHERE user_id = $2`, [now, user.user_id]);
@@ -160,6 +178,7 @@ app.post('/api/auth/login', async (req, res) => {
         });
     }
     catch (error) {
+        console.error('Login error:', error);
         res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
     }
 });
@@ -173,12 +192,14 @@ app.post('/api/auth/agent/register', async (req, res) => {
         const agent_id = uuidv4();
         const email_verification_token = uuidv4();
         const now = new Date().toISOString();
+        // Hash the password before storing
+        const password_hash = await bcrypt.hash(validated.password, 10);
         const result = await pool.query(`INSERT INTO agents (agent_id, email, password_hash, full_name, phone_number, license_number, 
        license_state, agency_name, office_address_street, office_address_city, office_address_state, 
        office_address_zip, years_experience, approved, approval_status, email_verified, 
        email_verification_token, account_status, created_at, updated_at) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, false, 'pending', false, $14, 'active', $15, $16) 
-       RETURNING *`, [agent_id, validated.email.toLowerCase(), validated.password, validated.full_name, validated.phone_number,
+       RETURNING *`, [agent_id, validated.email.toLowerCase(), password_hash, validated.full_name, validated.phone_number,
             validated.license_number, validated.license_state, validated.agency_name, validated.office_address_street,
             validated.office_address_city, validated.office_address_state, validated.office_address_zip,
             validated.years_experience, email_verification_token, now, now]);
@@ -201,6 +222,7 @@ app.post('/api/auth/agent/register', async (req, res) => {
         });
     }
     catch (error) {
+        console.error('Agent registration error:', error);
         if (error.name === 'ZodError') {
             return res.status(400).json(createErrorResponse('Validation error', error, 'VALIDATION_ERROR'));
         }
@@ -210,7 +232,7 @@ app.post('/api/auth/agent/register', async (req, res) => {
 app.post('/api/auth/agent/login', async (req, res) => {
     try {
         const validated = loginInputSchema.parse(req.body);
-        const result = await pool.query('SELECT * FROM agents WHERE email = $1 AND password_hash = $2', [validated.email.toLowerCase(), validated.password]);
+        const result = await pool.query('SELECT * FROM agents WHERE email = $1', [validated.email.toLowerCase()]);
         if (result.rows.length === 0) {
             return res.status(401).json({
                 success: false,
@@ -221,6 +243,17 @@ app.post('/api/auth/agent/login', async (req, res) => {
             });
         }
         const agent = result.rows[0];
+        // Compare password with hashed password
+        const passwordValid = await bcrypt.compare(validated.password, agent.password_hash);
+        if (!passwordValid) {
+            return res.status(401).json({
+                success: false,
+                token: null,
+                user: null,
+                agent: null,
+                error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
+            });
+        }
         if (!agent.approved || agent.approval_status !== 'approved') {
             return res.status(401).json({
                 success: false,
@@ -253,6 +286,7 @@ app.post('/api/auth/agent/login', async (req, res) => {
         });
     }
     catch (error) {
+        console.error('Agent login error:', error);
         res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
     }
 });
@@ -305,14 +339,16 @@ app.post('/api/auth/reset-password', async (req, res) => {
     try {
         const validated = resetPasswordInputSchema.parse(req.body);
         const now = new Date().toISOString();
+        // Hash the new password
+        const password_hash = await bcrypt.hash(validated.new_password, 10);
         const userResult = await pool.query(`UPDATE users SET password_hash = $1, password_reset_token = NULL, password_reset_expires = NULL, updated_at = $2 
-       WHERE password_reset_token = $3 AND password_reset_expires > $4 RETURNING user_id`, [validated.new_password, now, validated.token, now]);
+       WHERE password_reset_token = $3 AND password_reset_expires > $4 RETURNING user_id`, [password_hash, now, validated.token, now]);
         if (userResult.rows.length > 0) {
             await pool.query('DELETE FROM user_sessions WHERE user_id = $1', [userResult.rows[0].user_id]);
             return res.json({ success: true, message: 'Password reset successfully' });
         }
         const agentResult = await pool.query(`UPDATE agents SET password_hash = $1, password_reset_token = NULL, password_reset_expires = NULL, updated_at = $2 
-       WHERE password_reset_token = $3 AND password_reset_expires > $4 RETURNING agent_id`, [validated.new_password, now, validated.token, now]);
+       WHERE password_reset_token = $3 AND password_reset_expires > $4 RETURNING agent_id`, [password_hash, now, validated.token, now]);
         if (agentResult.rows.length > 0) {
             await pool.query('DELETE FROM agent_sessions WHERE agent_id = $1', [agentResult.rows[0].agent_id]);
             return res.json({ success: true, message: 'Password reset successfully' });
@@ -320,6 +356,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
         res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
     }
     catch (error) {
+        console.error('Password reset error:', error);
         res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
     }
 });
@@ -328,22 +365,37 @@ app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
         const validated = changePasswordInputSchema.parse(req.body);
         const now = new Date().toISOString();
         if (req.userType === 'user' && req.user) {
-            const result = await pool.query('SELECT user_id FROM users WHERE user_id = $1 AND password_hash = $2', [req.user.user_id, validated.current_password]);
+            const result = await pool.query('SELECT user_id, password_hash FROM users WHERE user_id = $1', [req.user.user_id]);
             if (result.rows.length === 0) {
+                return res.status(401).json({ success: false, message: 'User not found' });
+            }
+            // Verify current password
+            const passwordValid = await bcrypt.compare(validated.current_password, result.rows[0].password_hash);
+            if (!passwordValid) {
                 return res.status(401).json({ success: false, message: 'Current password is incorrect' });
             }
-            await pool.query('UPDATE users SET password_hash = $1, updated_at = $2 WHERE user_id = $3', [validated.new_password, now, req.user.user_id]);
+            // Hash new password
+            const new_password_hash = await bcrypt.hash(validated.new_password, 10);
+            await pool.query('UPDATE users SET password_hash = $1, updated_at = $2 WHERE user_id = $3', [new_password_hash, now, req.user.user_id]);
         }
         else if (req.userType === 'agent' && req.agent) {
-            const result = await pool.query('SELECT agent_id FROM agents WHERE agent_id = $1 AND password_hash = $2', [req.agent.agent_id, validated.current_password]);
+            const result = await pool.query('SELECT agent_id, password_hash FROM agents WHERE agent_id = $1', [req.agent.agent_id]);
             if (result.rows.length === 0) {
+                return res.status(401).json({ success: false, message: 'Agent not found' });
+            }
+            // Verify current password
+            const passwordValid = await bcrypt.compare(validated.current_password, result.rows[0].password_hash);
+            if (!passwordValid) {
                 return res.status(401).json({ success: false, message: 'Current password is incorrect' });
             }
-            await pool.query('UPDATE agents SET password_hash = $1, updated_at = $2 WHERE agent_id = $3', [validated.new_password, now, req.agent.agent_id]);
+            // Hash new password
+            const new_password_hash = await bcrypt.hash(validated.new_password, 10);
+            await pool.query('UPDATE agents SET password_hash = $1, updated_at = $2 WHERE agent_id = $3', [new_password_hash, now, req.agent.agent_id]);
         }
         res.json({ success: true, message: 'Password changed successfully' });
     }
     catch (error) {
+        console.error('Password change error:', error);
         res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
     }
 });
@@ -398,12 +450,26 @@ app.put('/api/users/me', authenticateToken, async (req, res) => {
         res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
     }
 });
+app.get('/api/users/notification-preferences', authenticateToken, async (req, res) => {
+    try {
+        if (req.userType !== 'user' || !req.user) {
+            return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
+        }
+        const result = await pool.query('SELECT * FROM user_notification_preferences WHERE user_id = $1', [req.user.user_id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json(createErrorResponse('Notification preferences not found', null, 'NOT_FOUND'));
+        }
+        res.json(result.rows[0]);
+    }
+    catch (error) {
+        res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    }
+});
 app.delete('/api/users/me', authenticateToken, async (req, res) => {
     try {
         if (req.userType !== 'user' || !req.user) {
             return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
         }
-        await pool.query('DELETE FROM user_sessions WHERE user_id = $1', [req.user.user_id]);
         await pool.query('DELETE FROM user_notification_preferences WHERE user_id = $1', [req.user.user_id]);
         await pool.query('DELETE FROM saved_searches WHERE user_id = $1', [req.user.user_id]);
         const favorites = await pool.query('SELECT property_id FROM favorites WHERE user_id = $1', [req.user.user_id]);
@@ -426,7 +492,15 @@ app.get('/api/properties', async (req, res) => {
         const conditions = [];
         const values = [];
         let paramCount = 1;
-        conditions.push(`p.status IN ('active', 'pending')`);
+        // Handle status filter - use provided status array or default to active/pending
+        if (validated.status && validated.status.length > 0) {
+            conditions.push(`p.status = ANY($${paramCount})`);
+            values.push(validated.status);
+            paramCount++;
+        }
+        else {
+            conditions.push(`p.status IN ('active', 'pending')`);
+        }
         if (validated.query) {
             conditions.push(`(LOWER(p.title) LIKE $${paramCount} OR LOWER(p.description) LIKE $${paramCount})`);
             values.push(`%${validated.query.toLowerCase()}%`);
@@ -499,14 +573,27 @@ app.get('/api/properties', async (req, res) => {
         }
         const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
         let orderBy = 'p.created_at DESC';
-        if (validated.sort_by === 'price' && validated.sort_order === 'asc')
-            orderBy = 'p.price ASC';
-        else if (validated.sort_by === 'price' && validated.sort_order === 'desc')
-            orderBy = 'p.price DESC';
-        else if (validated.sort_by === 'square_footage' && validated.sort_order === 'desc')
-            orderBy = 'p.square_footage DESC';
-        else if (validated.sort_by === 'view_count')
-            orderBy = 'p.view_count DESC';
+        if (validated.sort_by === 'price') {
+            orderBy = `p.price ${validated.sort_order.toUpperCase()}`;
+        }
+        else if (validated.sort_by === 'square_footage') {
+            orderBy = `p.square_footage ${validated.sort_order.toUpperCase()}`;
+        }
+        else if (validated.sort_by === 'view_count') {
+            orderBy = `p.view_count ${validated.sort_order.toUpperCase()}`;
+        }
+        else if (validated.sort_by === 'bedrooms') {
+            orderBy = `p.bedrooms ${validated.sort_order.toUpperCase()}`;
+        }
+        else if (validated.sort_by === 'updated_at') {
+            orderBy = `p.updated_at ${validated.sort_order.toUpperCase()}`;
+        }
+        else if (validated.sort_by === 'featured_order') {
+            orderBy = `p.featured_order ${validated.sort_order.toUpperCase()} NULLS LAST, p.created_at DESC`;
+        }
+        else if (validated.sort_by === 'created_at') {
+            orderBy = `p.created_at ${validated.sort_order.toUpperCase()}`;
+        }
         const countResult = await pool.query(`SELECT COUNT(*) as total FROM properties p ${whereClause}`, values);
         const result = await pool.query(`SELECT p.*, pp.image_url as thumbnail_url, a.full_name as agent_name, a.agency_name
        FROM properties p
@@ -625,6 +712,25 @@ app.post('/api/inquiries', async (req, res) => {
         res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
     }
 });
+app.get('/api/favorites', authenticateToken, async (req, res) => {
+    try {
+        if (req.userType !== 'user' || !req.user) {
+            return res.status(403).json(createErrorResponse('User access required', null, 'FORBIDDEN'));
+        }
+        const limit = parseInt(req.query.limit) || 100;
+        const offset = parseInt(req.query.offset) || 0;
+        const result = await pool.query(`SELECT f.*, p.* 
+       FROM favorites f 
+       JOIN properties p ON f.property_id = p.property_id 
+       WHERE f.user_id = $1 
+       ORDER BY f.created_at DESC 
+       LIMIT $2 OFFSET $3`, [req.user.user_id, limit, offset]);
+        res.json(result.rows);
+    }
+    catch (error) {
+        res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    }
+});
 app.post('/api/favorites', authenticateToken, async (req, res) => {
     try {
         if (req.userType !== 'user' || !req.user) {
@@ -660,3 +766,4 @@ export { app, pool };
 app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
+//# sourceMappingURL=server.js.map
