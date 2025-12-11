@@ -279,7 +279,10 @@ export const useAppStore = create<AppState>()(
           const response = await axios.post(
             `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/login`,
             { email, password },
-            { headers: { 'Content-Type': 'application/json' } }
+            { 
+              headers: { 'Content-Type': 'application/json' },
+              timeout: 10000 // 10 second timeout
+            }
           );
           
           const { user, token } = response.data;
@@ -300,9 +303,13 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
-          // Load user-specific data after login
-          await get().load_favorites();
-          await get().load_user_notification_preferences();
+          // Load user-specific data after login (non-blocking)
+          get().load_favorites().catch((error) => {
+            console.error('Failed to load favorites after login:', error);
+          });
+          get().load_user_notification_preferences().catch((error) => {
+            console.error('Failed to load notification preferences after login:', error);
+          });
           
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Login failed';
@@ -469,7 +476,10 @@ export const useAppStore = create<AppState>()(
           const response = await axios.post(
             `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/register`,
             data,
-            { headers: { 'Content-Type': 'application/json' } }
+            { 
+              headers: { 'Content-Type': 'application/json' },
+              timeout: 10000 // 10 second timeout
+            }
           );
           
           const { user, token } = response.data;
@@ -490,8 +500,11 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
-          // Load user data after registration
-          await get().load_user_notification_preferences();
+          // Load user data after registration (non-blocking, with error handling)
+          get().load_user_notification_preferences().catch((error) => {
+            console.error('Failed to load notification preferences after registration:', error);
+            // Continue anyway - user is registered and logged in
+          });
           
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Registration failed';
@@ -1000,7 +1013,8 @@ export const useAppStore = create<AppState>()(
               params: {
                 limit: 1000,
                 offset: 0
-              }
+              },
+              timeout: 5000 // 5 second timeout
             }
           );
           
@@ -1051,7 +1065,8 @@ export const useAppStore = create<AppState>()(
             {
               headers: {
                 'Authorization': `Bearer ${token}`
-              }
+              },
+              timeout: 5000 // 5 second timeout
             }
           );
           
