@@ -41,10 +41,10 @@ export const updateUserInputSchema = z.object({
 
 export const searchUserInputSchema = z.object({
   query: z.string().optional(),
-  email_verified: z.boolean().optional(),
+  email_verified: z.coerce.boolean().optional(),
   location: z.string().optional(),
-  limit: z.number().int().positive().default(20),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(20),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at', 'full_name', 'email']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -155,8 +155,8 @@ export const searchAgentInputSchema = z.object({
   license_state: z.string().optional(),
   specializations: z.array(z.string()).optional(),
   service_areas: z.array(z.string()).optional(),
-  limit: z.number().int().positive().default(20),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(20),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at', 'full_name', 'agency_name']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -348,28 +348,30 @@ export const searchPropertyInputSchema = z.object({
   listing_type: z.enum(['sale', 'rent']).optional(),
   property_type: z.array(z.enum(['house', 'condo', 'townhouse', 'apartment', 'land', 'commercial'])).optional(),
   status: z.array(z.enum(['draft', 'active', 'pending', 'sold', 'rented', 'inactive'])).optional(),
-  min_price: z.number().nonnegative().optional(),
-  max_price: z.number().positive().optional(),
+  min_price: z.coerce.number().nonnegative().optional(),
+  max_price: z.coerce.number().positive().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
   zip: z.string().optional(),
   neighborhood: z.string().optional(),
-  min_bedrooms: z.number().int().nonnegative().optional(),
-  max_bedrooms: z.number().int().positive().optional(),
-  min_bathrooms: z.number().nonnegative().optional(),
-  max_bathrooms: z.number().positive().optional(),
-  min_sqft: z.number().int().positive().optional(),
-  max_sqft: z.number().int().positive().optional(),
+  bedrooms: z.coerce.number().int().nonnegative().optional(),
+  min_bedrooms: z.coerce.number().int().nonnegative().optional(),
+  max_bedrooms: z.coerce.number().int().positive().optional(),
+  bathrooms: z.coerce.number().nonnegative().optional(),
+  min_bathrooms: z.coerce.number().nonnegative().optional(),
+  max_bathrooms: z.coerce.number().positive().optional(),
+  min_sqft: z.coerce.number().int().positive().optional(),
+  max_sqft: z.coerce.number().int().positive().optional(),
   amenities: z.array(z.string()).optional(),
   features: z.array(z.string()).optional(),
-  furnished: z.boolean().optional(),
-  pet_friendly: z.boolean().optional(),
-  new_construction: z.boolean().optional(),
-  recently_renovated: z.boolean().optional(),
-  virtual_tour_available: z.boolean().optional(),
-  is_featured: z.boolean().optional(),
-  limit: z.number().int().positive().default(20),
-  offset: z.number().int().nonnegative().default(0),
+  furnished: z.coerce.boolean().optional(),
+  pet_friendly: z.coerce.boolean().optional(),
+  new_construction: z.coerce.boolean().optional(),
+  recently_renovated: z.coerce.boolean().optional(),
+  virtual_tour_available: z.coerce.boolean().optional(),
+  is_featured: z.coerce.boolean().optional(),
+  limit: z.coerce.number().int().positive().default(20),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['price', 'created_at', 'updated_at', 'bedrooms', 'square_footage', 'view_count']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -474,12 +476,12 @@ export const searchInquiryInputSchema = z.object({
   agent_id: z.string().optional(),
   user_id: z.string().optional(),
   status: z.array(z.enum(['new', 'responded', 'scheduled', 'completed', 'closed'])).optional(),
-  agent_read: z.boolean().optional(),
-  viewing_requested: z.boolean().optional(),
+  agent_read: z.coerce.boolean().optional(),
+  viewing_requested: z.coerce.boolean().optional(),
   date_from: z.coerce.date().optional(),
   date_to: z.coerce.date().optional(),
-  limit: z.number().int().positive().default(20),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(20),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at', 'updated_at', 'status']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -541,8 +543,8 @@ export const createFavoriteInputSchema = z.object({
 export const searchFavoriteInputSchema = z.object({
   user_id: z.string().optional(),
   property_id: z.string().optional(),
-  limit: z.number().int().positive().default(50),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(50),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -580,8 +582,8 @@ export const searchPropertyViewInputSchema = z.object({
   user_id: z.string().optional(),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
-  limit: z.number().int().positive().default(100),
-  offset: z.number().int().nonnegative().default(0)
+  limit: z.coerce.number().int().positive().default(100),
+  offset: z.coerce.number().int().nonnegative().default(0)
 });
 
 export type PropertyView = z.infer<typeof propertyViewSchema>;
@@ -625,8 +627,8 @@ export const searchPropertyReportInputSchema = z.object({
   property_id: z.string().optional(),
   status: z.array(z.enum(['pending', 'resolved', 'dismissed'])).optional(),
   reason: z.string().optional(),
-  limit: z.number().int().positive().default(20),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(20),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at', 'status']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -781,9 +783,9 @@ export const updateSavedSearchInputSchema = z.object({
 
 export const searchSavedSearchInputSchema = z.object({
   user_id: z.string(),
-  is_active: z.boolean().optional(),
-  limit: z.number().int().positive().default(50),
-  offset: z.number().int().nonnegative().default(0),
+  is_active: z.coerce.boolean().optional(),
+  limit: z.coerce.number().int().positive().default(50),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at', 'search_name']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -1028,8 +1030,8 @@ export const searchEmailLogInputSchema = z.object({
   status: z.array(z.enum(['pending', 'delivered', 'bounced', 'failed'])).optional(),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
-  limit: z.number().int().positive().default(50),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(50),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['created_at', 'sent_at']).default('created_at'),
   sort_order: z.enum(['asc', 'desc']).default('desc')
 });
@@ -1076,11 +1078,11 @@ export const updateOpenHouseInputSchema = z.object({
 
 export const searchOpenHouseInputSchema = z.object({
   property_id: z.string().optional(),
-  is_active: z.boolean().optional(),
+  is_active: z.coerce.boolean().optional(),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
-  limit: z.number().int().positive().default(20),
-  offset: z.number().int().nonnegative().default(0),
+  limit: z.coerce.number().int().positive().default(20),
+  offset: z.coerce.number().int().nonnegative().default(0),
   sort_by: z.enum(['scheduled_date', 'created_at']).default('scheduled_date'),
   sort_order: z.enum(['asc', 'desc']).default('asc')
 });

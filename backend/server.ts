@@ -1,12 +1,42 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Pool } from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import morgan from 'morgan';
+
+// Type extensions for Express Request
+interface AuthenticatedRequest extends Request {
+  user?: {
+    user_id: string;
+    email: string;
+    full_name: string;
+    email_verified: boolean;
+  };
+  agent?: {
+    agent_id: string;
+    email: string;
+    full_name: string;
+    approved: boolean;
+    account_status: string;
+  };
+  admin?: {
+    admin_id: string;
+    email: string;
+    full_name: string;
+    role: string;
+  };
+  userType?: 'user' | 'agent' | 'admin';
+}
+
+interface DecodedToken extends JwtPayload {
+  user_id?: string;
+  agent_id?: string;
+  admin_id?: string;
+}
 import { 
   loginInputSchema,
   registerUserInputSchema,
@@ -69,11 +99,11 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
 
-function createErrorResponse(message, error, errorCode) {
-  const response = {
+function createErrorResponse(message: string, error: any = null, errorCode: string = 'INTERNAL_ERROR') {
+  const response: any = {
     success: false,
     message,
-    error_code: errorCode || 'INTERNAL_ERROR',
+    error_code: errorCode,
     timestamp: new Date().toISOString()
   };
   if (error && process.env.NODE_ENV === 'development') {
@@ -86,7 +116,7 @@ function createErrorResponse(message, error, errorCode) {
   return response;
 }
 
-const authenticateToken = async (req, res, next) => {
+const authenticateToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -95,7 +125,7 @@ const authenticateToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
     
     if (decoded.user_id) {
       const result = await pool.query(
@@ -131,7 +161,7 @@ const authenticateToken = async (req, res, next) => {
     
     next();
   } catch (error) {
-    return res.status(403).json(createErrorResponse('Invalid or expired token', error, 'AUTH_TOKEN_INVALID'));
+    return res.status(403).json(createErrorResponse('Invalid or expired token', error as Error, 'AUTH_TOKEN_INVALID'));
   }
 };
 
@@ -465,12 +495,12 @@ app.post('/api/auth/reset-password', async (req, res) => {
   }
 });
 
-app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
+app.post('/api/auth/change-password', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const validated = changePasswordInputSchema.parse(req.body);
     const now = new Date().toISOString();
 
-    if (req.userType === 'user') {
+    if (req.userType === 'user' && req.user) {
       const result = await pool.query(
         'SELECT user_id FROM users WHERE user_id = $1 AND password_hash = $2',
         [req.user.user_id, validated.current_password]
@@ -484,7 +514,7 @@ app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
         'UPDATE users SET password_hash = $1, updated_at = $2 WHERE user_id = $3',
         [validated.new_password, now, req.user.user_id]
       );
-    } else if (req.userType === 'agent') {
+    } else if (req.userType === 'agent' && req.agent) {
       const result = await pool.query(
         'SELECT agent_id FROM agents WHERE agent_id = $1 AND password_hash = $2',
         [req.agent.agent_id, validated.current_password]
@@ -502,13 +532,13 @@ app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
 
     res.json({ success: true, message: 'Password changed successfully' });
   } catch (error) {
-    res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
 
-app.get('/api/users/me', authenticateToken, async (req, res) => {
+app.get('/api/users/me', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (req.userType !== 'user') {
+    if (req.userType !== 'user' || !req.user) {
       return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
     }
 
@@ -523,13 +553,13 @@ app.get('/api/users/me', authenticateToken, async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
 
-app.put('/api/users/me', authenticateToken, async (req, res) => {
+app.put('/api/users/me', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (req.userType !== 'user') {
+    if (req.userType !== 'user' || !req.user) {
       return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
     }
 
@@ -537,7 +567,7 @@ app.put('/api/users/me', authenticateToken, async (req, res) => {
     const now = new Date().toISOString();
 
     const updates = [];
-    const values = [];
+    const values: any[] = [];
     let paramCount = 1;
 
     if (validated.full_name !== undefined) {
@@ -568,13 +598,13 @@ app.put('/api/users/me', authenticateToken, async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
 
-app.delete('/api/users/me', authenticateToken, async (req, res) => {
+app.delete('/api/users/me', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (req.userType !== 'user') {
+    if (req.userType !== 'user' || !req.user) {
       return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
     }
 
@@ -594,7 +624,7 @@ app.delete('/api/users/me', authenticateToken, async (req, res) => {
 
     res.json({ success: true, message: 'Account deleted successfully' });
   } catch (error) {
-    res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
 
@@ -730,9 +760,9 @@ app.get('/api/properties', async (req, res) => {
   }
 });
 
-app.post('/api/properties', authenticateToken, async (req, res) => {
+app.post('/api/properties', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (req.userType !== 'agent') {
+    if (req.userType !== 'agent' || !req.agent) {
       return res.status(403).json(createErrorResponse('Agent access required', null, 'FORBIDDEN'));
     }
 
@@ -855,9 +885,9 @@ app.post('/api/inquiries', async (req, res) => {
   }
 });
 
-app.post('/api/favorites', authenticateToken, async (req, res) => {
+app.post('/api/favorites', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (req.userType !== 'user') {
+    if (req.userType !== 'user' || !req.user) {
       return res.status(403).json(createErrorResponse('User access required', null, 'FORBIDDEN'));
     }
 
@@ -886,7 +916,7 @@ app.post('/api/favorites', authenticateToken, async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
 
