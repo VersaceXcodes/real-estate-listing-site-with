@@ -251,14 +251,15 @@ const UV_Contact: React.FC = () => {
   // ========== HANDLERS ==========
   
   const handleInputChange = (field: keyof ContactFormState, value: string) => {
-    setContactForm(prev => ({
-      ...prev,
-      [field]: value,
-      validation_errors: {
-        ...prev.validation_errors,
-        [field]: undefined, // Clear error when user types
-      },
-    }));
+    setContactForm(prev => {
+      const newErrors = { ...prev.validation_errors };
+      delete newErrors[field]; // Clear error when user types
+      return {
+        ...prev,
+        [field]: value,
+        validation_errors: newErrors,
+      };
+    });
   };
   
   const handleCategoryChange = (categoryId: string) => {

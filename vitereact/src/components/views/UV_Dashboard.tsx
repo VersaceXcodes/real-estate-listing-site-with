@@ -7,10 +7,10 @@ import { useAppStore } from '@/store/main';
 const UV_Dashboard: React.FC = () => {
   // CRITICAL: Individual selectors, no object destructuring
   const currentUser = useAppStore(state => state.authentication_state.current_user);
-  const logoutUser = useAppStore(state => state.logout_user);
+  const logout = useAppStore(state => state.logout);
 
   const handleLogout = () => {
-    logoutUser();
+    logout();
   };
 
   return (
@@ -47,7 +47,7 @@ const UV_Dashboard: React.FC = () => {
             <div className="border-4 border-dashed border-gray-200 rounded-lg p-8">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Welcome back, {currentUser?.name}!
+                  Welcome back, {currentUser?.full_name}!
                 </h2>
                 <p className="text-gray-600 mb-4">
                   This is your protected dashboard. You can only see this because you're authenticated.
@@ -57,7 +57,7 @@ const UV_Dashboard: React.FC = () => {
                     <strong>Email:</strong> {currentUser?.email}
                   </p>
                   <p className="text-blue-700 text-sm mt-1">
-                    <strong>User ID:</strong> {currentUser?.id}
+                    <strong>User ID:</strong> {currentUser?.user_id}
                   </p>
                 </div>
               </div>

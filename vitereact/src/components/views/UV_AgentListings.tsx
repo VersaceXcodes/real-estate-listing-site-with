@@ -256,22 +256,24 @@ const UV_AgentListings: React.FC = () => {
   
   const handleStatusFilterChange = (status: string) => {
     let newStatus: string[];
-    if (activeFilters.status.includes(status)) {
-      newStatus = activeFilters.status.filter(s => s !== status);
+    const currentStatuses = Array.isArray(activeFilters.status) ? activeFilters.status : [];
+    if (currentStatuses.includes(status)) {
+      newStatus = currentStatuses.filter(s => s !== status);
     } else {
-      newStatus = [...activeFilters.status, status];
+      newStatus = [...currentStatuses, status];
     }
-    updateURLParams({ status: newStatus.join(',') || '' });
+    updateURLParams({ status: newStatus });
   };
   
   const handlePropertyTypeFilterChange = (type: string) => {
     let newTypes: string[];
-    if (activeFilters.property_type.includes(type)) {
-      newTypes = activeFilters.property_type.filter(t => t !== type);
+    const currentTypes = Array.isArray(activeFilters.property_type) ? activeFilters.property_type : [];
+    if (currentTypes.includes(type)) {
+      newTypes = currentTypes.filter(t => t !== type);
     } else {
-      newTypes = [...activeFilters.property_type, type];
+      newTypes = [...currentTypes, type];
     }
-    updateURLParams({ property_type: newTypes.join(',') || '' });
+    updateURLParams({ property_type: newTypes });
   };
   
   const handleListingTypeChange = (type: string | null) => {
@@ -284,7 +286,7 @@ const UV_AgentListings: React.FC = () => {
     
     // Debounce search
     const timer = setTimeout(() => {
-      updateURLParams({ search: value });
+      updateURLParams({ search_query: value });
     }, 300);
     
     return () => clearTimeout(timer);

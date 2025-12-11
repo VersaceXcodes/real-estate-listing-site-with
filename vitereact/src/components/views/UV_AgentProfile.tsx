@@ -275,7 +275,7 @@ const UV_AgentProfile: React.FC = () => {
       user_id: currentUser?.user_id || null,
       inquirer_name: contactFormData.name,
       inquirer_email: contactFormData.email,
-      inquirer_phone: contactFormData.phone || null,
+      inquirer_phone: contactFormData.phone || '',
       message: contactFormData.message,
       viewing_requested: false
     };

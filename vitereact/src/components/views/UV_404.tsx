@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
-import { Home, Search, MapPin, User, TrendingUp, ArrowRight } from 'lucide-react';
+import { Home, Search, MapPin, TrendingUp, ArrowRight } from 'lucide-react';
 
 // Type definitions based on propertySchema
 interface Property {
@@ -38,8 +38,6 @@ const UV_404: React.FC = () => {
   const location = useLocation();
   
   // Global state - CRITICAL: Individual selectors only
-  const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
-  const showToast = useAppStore(state => state.show_toast);
   
   // Parse URL parameters for error context
   const urlParams = new URLSearchParams(location.search);

@@ -661,7 +661,11 @@ const UV_UserAccount: React.FC = () => {
                                 value={profileEditForm.full_name}
                                 onChange={(e) => {
                                   setProfileEditForm(prev => ({ ...prev, full_name: e.target.value }));
-                                  setProfileValidationErrors(prev => ({ ...prev, full_name: undefined }));
+                                  setProfileValidationErrors(prev => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.full_name;
+                                    return newErrors;
+                                  });
                                 }}
                                 className={`w-full px-4 py-3 rounded-lg border-2 ${
                                   profileValidationErrors.full_name
@@ -718,7 +722,11 @@ const UV_UserAccount: React.FC = () => {
                                   value={profileEditForm.phone_number}
                                   onChange={(e) => {
                                     setProfileEditForm(prev => ({ ...prev, phone_number: e.target.value }));
-                                    setProfileValidationErrors(prev => ({ ...prev, phone_number: undefined }));
+                                    setProfileValidationErrors(prev => {
+                                      const newErrors = { ...prev };
+                                      delete newErrors.phone_number;
+                                      return newErrors;
+                                    });
                                   }}
                                   className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 ${
                                     profileValidationErrors.phone_number

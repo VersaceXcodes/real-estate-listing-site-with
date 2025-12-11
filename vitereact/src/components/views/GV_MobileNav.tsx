@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/main';
 import { X, Home, Search, Heart, MessageSquare, User, LayoutDashboard, FileText, Plus, Settings, LogOut, ChevronRight } from 'lucide-react';
 
@@ -14,7 +14,6 @@ const GV_MobileNav: React.FC = () => {
   // Authentication state
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const isAgentAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_agent_authenticated);
-  const userType = useAppStore(state => state.authentication_state.authentication_status.user_type);
   const currentUser = useAppStore(state => state.authentication_state.current_user);
   const currentAgent = useAppStore(state => state.authentication_state.current_agent);
   

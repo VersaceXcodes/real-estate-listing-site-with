@@ -23,10 +23,9 @@ const GV_AuthModal: React.FC<AuthModalProps> = ({
   const registerUser = useAppStore(state => state.register_user);
   const requestPasswordReset = useAppStore(state => state.request_password_reset);
   const clearAuthError = useAppStore(state => state.clear_auth_error);
-  const showToast = useAppStore(state => state.show_toast);
 
   // ========== LOCAL STATE ==========
-  const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot_password'>>(initialMode);
+  const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot_password'>(initialMode);
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');

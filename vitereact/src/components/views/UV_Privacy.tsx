@@ -312,7 +312,7 @@ California residents have additional rights:
 **7.5 Exercising Your Rights**
 
 To exercise any of these rights:
-• Email us at ${privacyContent.contactEmail}
+• Email us at privacy@propconnect.com
 • Use the account deletion tool in your settings
 • Submit a written request to our office address
 • Contact our Data Protection Officer
@@ -330,7 +330,7 @@ If you are under 18 years old, please do not:
 • Submit inquiries
 • Provide any personal information
 
-If we learn we have collected information from a child under 18, we will delete it immediately. If you believe a child has provided us with personal information, please contact us at ${privacyContent.contactEmail}.
+If we learn we have collected information from a child under 18, we will delete it immediately. If you believe a child has provided us with personal information, please contact us at privacy@propconnect.com.
 
 Parents and guardians: Please monitor your children's internet usage and help us protect their privacy.`
       },
@@ -385,7 +385,7 @@ By using PropConnect from outside the United States, you consent to the transfer
         icon: Mail,
         content: `If you have questions, concerns, or requests regarding this Privacy Policy or your personal data:
 
-**Email:** ${privacyContent.contactEmail}
+**Email:** privacy@propconnect.com
 
 **Mail:**
 PropConnect Privacy Team

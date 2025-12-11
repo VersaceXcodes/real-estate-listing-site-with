@@ -65,7 +65,7 @@ const UV_AdminAgentApprovals: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<'pending' | 'approved' | 'rejected'>(
     urlStatus as 'pending' | 'approved' | 'rejected'
   );
-  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+
   const [approvalModal, setApprovalModal] = useState({
     is_open: false,
     agent_id: null as string | null,
@@ -126,7 +126,7 @@ const UV_AdminAgentApprovals: React.FC = () => {
       );
       return response.data as ApprovalResponse;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       // Invalidate queries to refresh list
       queryClient.invalidateQueries({ queryKey: ['admin', 'agents'] });
       

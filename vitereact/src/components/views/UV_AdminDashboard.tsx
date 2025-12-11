@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -730,9 +730,8 @@ const UV_AdminDashboard: React.FC = () => {
               </Link>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
     </>
   );
 };

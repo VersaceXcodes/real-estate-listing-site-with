@@ -802,9 +802,9 @@ const UV_AdminReportedListings: React.FC = () => {
                       </svg>
                       <div>
                         <p className="font-semibold text-blue-900">
-                          This report has been {report_detail_modal.report_data.status}
+                          This report has been {report_detail_modal.report_data?.status}
                         </p>
-                        {report_detail_modal.report_data.resolved_at && (
+                        {report_detail_modal.report_data?.resolved_at && (
                           <p className="text-sm text-blue-700 mt-1">
                             Resolved on {formatDate(report_detail_modal.report_data.resolved_at)}
                           </p>
