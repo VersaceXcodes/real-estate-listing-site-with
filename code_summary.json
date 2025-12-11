@@ -1,0 +1,585 @@
+{
+  "project_name": "Real Estate Listing Platform",
+  "description": "Full-stack real estate listing and property management platform with separate portals for users, agents, and administrators",
+  "generated_at": "2025-01-11T10:30:00Z",
+  "tech_stack": {
+    "frontend": [
+      "React 18.3.1",
+      "TypeScript 5.5.3",
+      "Vite 5.4.0",
+      "React Router DOM 6.26.0",
+      "TailwindCSS 3.4.8",
+      "Radix UI Components",
+      "Zustand (State Management)",
+      "Redux Toolkit & React Redux",
+      "React Query (TanStack Query)",
+      "React Hook Form",
+      "Zod (Validation)",
+      "Axios",
+      "Framer Motion",
+      "Lucide React (Icons)",
+      "Recharts (Analytics)",
+      "Socket.io Client"
+    ],
+    "backend": [
+      "Node.js",
+      "Express.js",
+      "TypeScript",
+      "PostgreSQL",
+      "pg (Node-Postgres)",
+      "JWT (jsonwebtoken)",
+      "Zod (Schema Validation)",
+      "Morgan (Logging)",
+      "CORS",
+      "dotenv"
+    ],
+    "testing": [
+      "Vitest 3.2.4",
+      "Testing Library (React)",
+      "jsdom"
+    ],
+    "development": [
+      "ESLint",
+      "Prettier",
+      "Concurrently"
+    ]
+  },
+  "architecture": {
+    "pattern": "Full-stack monorepo",
+    "structure": "Frontend (Vite/React) + Backend (Express) + PostgreSQL Database",
+    "authentication": "JWT-based with role-based access control (User, Agent, Admin)",
+    "deployment": "Single domain hosting both frontend and API"
+  },
+  "database_tables": [
+    "users",
+    "agents",
+    "admins",
+    "properties",
+    "property_photos",
+    "inquiries",
+    "inquiry_replies",
+    "favorites",
+    "property_views",
+    "property_reports",
+    "user_notification_preferences",
+    "agent_notification_preferences",
+    "saved_searches",
+    "property_price_history",
+    "property_status_history",
+    "agent_sessions",
+    "user_sessions",
+    "agent_analytics_daily",
+    "property_analytics_daily",
+    "email_logs",
+    "open_houses",
+    "open_house_rsvps",
+    "listing_notes"
+  ],
+  "api_endpoints": [
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "description": "Health check endpoint",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/register",
+      "method": "POST",
+      "description": "Register new user account",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "description": "User login",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/agent/register",
+      "method": "POST",
+      "description": "Register new agent account (requires admin approval)",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/agent/login",
+      "method": "POST",
+      "description": "Agent login",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/verify-email",
+      "method": "POST",
+      "description": "Verify email address with token",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/forgot-password",
+      "method": "POST",
+      "description": "Request password reset",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/reset-password",
+      "method": "POST",
+      "description": "Reset password with token",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/auth/change-password",
+      "method": "POST",
+      "description": "Change password (authenticated)",
+      "authentication": "Required (User/Agent)"
+    },
+    {
+      "path": "/api/users/me",
+      "method": "GET",
+      "description": "Get current user profile",
+      "authentication": "Required (User)"
+    },
+    {
+      "path": "/api/users/me",
+      "method": "PUT",
+      "description": "Update user profile",
+      "authentication": "Required (User)"
+    },
+    {
+      "path": "/api/users/me",
+      "method": "DELETE",
+      "description": "Delete user account",
+      "authentication": "Required (User)"
+    },
+    {
+      "path": "/api/users/notification-preferences",
+      "method": "GET",
+      "description": "Get user notification preferences",
+      "authentication": "Required (User)"
+    },
+    {
+      "path": "/api/properties",
+      "method": "GET",
+      "description": "Search and filter properties",
+      "authentication": "None",
+      "query_params": [
+        "query",
+        "listing_type",
+        "property_type",
+        "min_price",
+        "max_price",
+        "city",
+        "state",
+        "bedrooms",
+        "bathrooms",
+        "min_sqft",
+        "max_sqft",
+        "furnished",
+        "pet_friendly",
+        "is_featured",
+        "sort_by",
+        "sort_order",
+        "limit",
+        "offset"
+      ]
+    },
+    {
+      "path": "/api/properties",
+      "method": "POST",
+      "description": "Create new property listing",
+      "authentication": "Required (Agent)"
+    },
+    {
+      "path": "/api/properties/:property_id",
+      "method": "GET",
+      "description": "Get property details",
+      "authentication": "None"
+    },
+    {
+      "path": "/api/inquiries",
+      "method": "POST",
+      "description": "Submit inquiry about property",
+      "authentication": "None (Optional User)"
+    },
+    {
+      "path": "/api/favorites",
+      "method": "GET",
+      "description": "Get user's favorite properties",
+      "authentication": "Required (User)"
+    },
+    {
+      "path": "/api/favorites",
+      "method": "POST",
+      "description": "Add property to favorites",
+      "authentication": "Required (User)"
+    }
+  ],
+  "features": [
+    {
+      "name": "User Authentication",
+      "description": "Multi-role authentication system with JWT tokens for users, agents, and admins",
+      "files": [
+        "backend/server.ts:168-269",
+        "vitereact/src/components/views/UV_Login.tsx",
+        "vitereact/src/components/views/UV_Register.tsx",
+        "vitereact/src/components/views/UV_AgentLogin.tsx",
+        "vitereact/src/components/views/UV_AgentRegister.tsx",
+        "vitereact/src/components/views/GV_AuthModal.tsx"
+      ],
+      "endpoints": [
+        "/api/auth/register",
+        "/api/auth/login",
+        "/api/auth/agent/register",
+        "/api/auth/agent/login"
+      ]
+    },
+    {
+      "name": "Email Verification",
+      "description": "Email verification system with token-based confirmation",
+      "files": [
+        "backend/server.ts:392-419",
+        "vitereact/src/components/views/UV_EmailVerification.tsx"
+      ],
+      "endpoints": ["/api/auth/verify-email"]
+    },
+    {
+      "name": "Password Reset",
+      "description": "Forgot password and reset password functionality",
+      "files": [
+        "backend/server.ts:421-496",
+        "vitereact/src/components/views/UV_ForgotPassword.tsx",
+        "vitereact/src/components/views/UV_ResetPassword.tsx"
+      ],
+      "endpoints": [
+        "/api/auth/forgot-password",
+        "/api/auth/reset-password",
+        "/api/auth/change-password"
+      ]
+    },
+    {
+      "name": "Property Search & Filtering",
+      "description": "Advanced property search with multiple filters and sorting options",
+      "files": [
+        "backend/server.ts:651-781",
+        "vitereact/src/components/views/UV_SearchResults.tsx",
+        "vitereact/src/components/views/UV_Landing.tsx"
+      ],
+      "endpoints": ["/api/properties"],
+      "filters": [
+        "Text Search",
+        "Listing Type (Sale/Rent)",
+        "Property Type",
+        "Price Range",
+        "Location (City, State)",
+        "Bedrooms & Bathrooms",
+        "Square Footage",
+        "Furnished",
+        "Pet Friendly",
+        "Featured Listings"
+      ]
+    },
+    {
+      "name": "Property Details",
+      "description": "Comprehensive property detail pages with photos, amenities, and agent info",
+      "files": [
+        "backend/server.ts:852-870",
+        "vitereact/src/components/views/UV_PropertyDetail.tsx"
+      ],
+      "endpoints": ["/api/properties/:property_id"]
+    },
+    {
+      "name": "Property Listings Management (Agents)",
+      "description": "Agents can create, edit, and manage their property listings",
+      "files": [
+        "backend/server.ts:783-850",
+        "vitereact/src/components/views/UV_CreateListing.tsx",
+        "vitereact/src/components/views/UV_EditListing.tsx",
+        "vitereact/src/components/views/UV_AgentListings.tsx"
+      ],
+      "endpoints": [
+        "/api/properties (POST)",
+        "/api/properties/:property_id (PUT)",
+        "/api/properties/:property_id (DELETE)"
+      ]
+    },
+    {
+      "name": "Inquiry System",
+      "description": "Users can inquire about properties and agents receive/respond to inquiries",
+      "files": [
+        "backend/server.ts:872-906",
+        "vitereact/src/components/views/UV_AgentInquiries.tsx",
+        "vitereact/src/components/views/UV_UserInquiries.tsx"
+      ],
+      "endpoints": [
+        "/api/inquiries (POST)",
+        "/api/inquiries/:inquiry_id (PUT)",
+        "/api/inquiries/:inquiry_id/replies (POST)"
+      ],
+      "features_included": [
+        "Schedule Viewing Requests",
+        "Inquiry Status Tracking",
+        "Reply Threading",
+        "Email Notifications"
+      ]
+    },
+    {
+      "name": "Favorites System",
+      "description": "Users can save and manage favorite properties",
+      "files": [
+        "backend/server.ts:908-966",
+        "vitereact/src/components/views/UV_SavedProperties.tsx"
+      ],
+      "endpoints": [
+        "/api/favorites (GET)",
+        "/api/favorites (POST)",
+        "/api/favorites/:favorite_id (DELETE)"
+      ]
+    },
+    {
+      "name": "User Dashboard",
+      "description": "User portal with saved properties, inquiries, and account management",
+      "files": [
+        "vitereact/src/components/views/UV_Dashboard.tsx",
+        "vitereact/src/components/views/UV_UserAccount.tsx",
+        "vitereact/src/components/views/UV_SavedProperties.tsx",
+        "vitereact/src/components/views/UV_UserInquiries.tsx"
+      ]
+    },
+    {
+      "name": "Agent Dashboard",
+      "description": "Agent portal with listings management, inquiries, and performance analytics",
+      "files": [
+        "vitereact/src/components/views/UV_AgentDashboard.tsx",
+        "vitereact/src/components/views/UV_AgentListings.tsx",
+        "vitereact/src/components/views/UV_AgentInquiries.tsx",
+        "vitereact/src/components/views/UV_AgentProfile.tsx",
+        "vitereact/src/components/views/UV_AgentSettings.tsx"
+      ]
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "Admin portal for agent approvals, featured listings management, and reports",
+      "files": [
+        "vitereact/src/components/views/UV_AdminDashboard.tsx",
+        "vitereact/src/components/views/UV_AdminAgentApprovals.tsx",
+        "vitereact/src/components/views/UV_AdminFeaturedListings.tsx",
+        "vitereact/src/components/views/UV_AdminReportedListings.tsx"
+      ]
+    },
+    {
+      "name": "Agent Approval System",
+      "description": "Admin workflow for reviewing and approving agent registrations",
+      "files": [
+        "vitereact/src/components/views/UV_AdminAgentApprovals.tsx"
+      ],
+      "database_tables": ["agents"],
+      "fields": ["approved", "approval_status", "rejection_reason"]
+    },
+    {
+      "name": "Featured Listings",
+      "description": "Admins can feature properties with custom ordering and expiration dates",
+      "files": [
+        "vitereact/src/components/views/UV_AdminFeaturedListings.tsx"
+      ],
+      "database_tables": ["properties"],
+      "fields": ["is_featured", "featured_until", "featured_order"]
+    },
+    {
+      "name": "Property Reporting",
+      "description": "Users can report suspicious or incorrect property listings",
+      "database_tables": ["property_reports"],
+      "files": [
+        "vitereact/src/components/views/UV_AdminReportedListings.tsx"
+      ]
+    },
+    {
+      "name": "Open Houses",
+      "description": "Schedule and manage open house events with RSVP tracking",
+      "database_tables": ["open_houses", "open_house_rsvps"],
+      "fields": [
+        "scheduled_date",
+        "start_time",
+        "end_time",
+        "rsvp_count"
+      ]
+    },
+    {
+      "name": "Analytics & Tracking",
+      "description": "Daily analytics for agents and properties including views, inquiries, and favorites",
+      "database_tables": [
+        "agent_analytics_daily",
+        "property_analytics_daily",
+        "property_views"
+      ]
+    },
+    {
+      "name": "Notification Preferences",
+      "description": "Users and agents can customize their notification settings",
+      "database_tables": [
+        "user_notification_preferences",
+        "agent_notification_preferences"
+      ],
+      "files": [
+        "backend/server.ts:605-624",
+        "vitereact/src/components/views/UV_AgentSettings.tsx"
+      ]
+    },
+    {
+      "name": "Saved Searches",
+      "description": "Users can save search criteria and receive alerts for matching properties",
+      "database_tables": ["saved_searches"],
+      "features_included": [
+        "Custom search names",
+        "Alert frequency settings",
+        "Active/inactive toggle"
+      ]
+    },
+    {
+      "name": "Price History Tracking",
+      "description": "Automatic tracking of property price changes",
+      "database_tables": ["property_price_history"],
+      "fields": [
+        "old_price",
+        "new_price",
+        "price_change_amount",
+        "price_change_percentage"
+      ]
+    },
+    {
+      "name": "Status History",
+      "description": "Track property status changes (draft, active, pending, sold, rented)",
+      "database_tables": ["property_status_history"]
+    },
+    {
+      "name": "Email Logging",
+      "description": "Track all system emails with delivery status",
+      "database_tables": ["email_logs"],
+      "email_types": [
+        "welcome",
+        "email_verification",
+        "password_reset",
+        "new_inquiry",
+        "agent_reply",
+        "price_alert",
+        "monthly_report"
+      ]
+    },
+    {
+      "name": "Listing Notes",
+      "description": "Agents can add private notes to their listings",
+      "database_tables": ["listing_notes"],
+      "note_types": [
+        "general",
+        "showing_feedback",
+        "offer",
+        "maintenance",
+        "price_strategy"
+      ]
+    },
+    {
+      "name": "Responsive Navigation",
+      "description": "Mobile-responsive navigation with role-based menu items",
+      "files": [
+        "vitereact/src/components/views/GV_TopNav.tsx",
+        "vitereact/src/components/views/GV_MobileNav.tsx",
+        "vitereact/src/components/views/GV_Footer.tsx"
+      ]
+    },
+    {
+      "name": "Contact & Support",
+      "description": "Contact form and support pages",
+      "files": [
+        "vitereact/src/components/views/UV_Contact.tsx",
+        "vitereact/src/components/views/UV_Privacy.tsx",
+        "vitereact/src/components/views/UV_Terms.tsx"
+      ]
+    }
+  ],
+  "user_roles": {
+    "user": {
+      "description": "Property seekers who can search, favorite, and inquire about properties",
+      "permissions": [
+        "Search properties",
+        "View property details",
+        "Save favorite properties",
+        "Submit inquiries",
+        "Schedule viewings",
+        "Save searches",
+        "Manage account settings",
+        "View notification preferences"
+      ],
+      "dashboard_features": [
+        "Saved properties",
+        "Active inquiries",
+        "Saved searches",
+        "Account management"
+      ]
+    },
+    "agent": {
+      "description": "Real estate agents who list and manage properties",
+      "permissions": [
+        "Create property listings",
+        "Edit own listings",
+        "Delete own listings",
+        "Receive inquiries",
+        "Reply to inquiries",
+        "Schedule open houses",
+        "Add listing notes",
+        "View analytics",
+        "Manage profile"
+      ],
+      "dashboard_features": [
+        "Active listings",
+        "Inquiry management",
+        "Performance analytics",
+        "Open house management",
+        "Profile settings"
+      ],
+      "approval_required": true
+    },
+    "admin": {
+      "description": "Platform administrators with full system access",
+      "permissions": [
+        "Approve/reject agent registrations",
+        "Manage featured listings",
+        "Review property reports",
+        "Suspend accounts",
+        "View all analytics",
+        "System configuration"
+      ],
+      "dashboard_features": [
+        "Agent approval queue",
+        "Featured listings management",
+        "Reported listings review",
+        "Platform analytics"
+      ]
+    }
+  },
+  "key_database_relationships": {
+    "properties": {
+      "belongs_to": "agents (agent_id)",
+      "has_many": [
+        "property_photos",
+        "inquiries",
+        "favorites",
+        "property_views",
+        "property_reports",
+        "open_houses",
+        "listing_notes"
+      ]
+    },
+    "agents": {
+      "has_many": [
+        "properties",
+        "inquiries",
+        "agent_sessions",
+        "agent_analytics_daily"
+      ]
+    },
+    "users": {
+      "has_many": [
+        "inquiries",
+        "favorites",
+        "saved_searches",
+        "user_sessions"
+      ]
+    }
+  }
+}

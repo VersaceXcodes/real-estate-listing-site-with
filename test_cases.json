@@ -1,0 +1,1049 @@
+{
+  "generated_at": "2025-01-11T10:30:00Z",
+  "project_name": "Real Estate Listing Platform",
+  "frontend_url": "https://123real-estate-listing-site-with.launchpulse.ai",
+  "backend_url": "https://123real-estate-listing-site-with.launchpulse.ai",
+  "total_test_cases": 47,
+  "test_categories": [
+    "Functionality",
+    "Authentication",
+    "User Interface",
+    "Search & Filtering",
+    "CRUD Operations",
+    "Role-Based Access",
+    "Data Validation",
+    "Error Handling",
+    "Performance",
+    "Security"
+  ],
+  "testCases": [
+    {
+      "id": "func-001",
+      "name": "Functional Application Test",
+      "category": "functionality",
+      "priority": "critical",
+      "description": "Verify the application has actual real estate functionality beyond basic placeholder content",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the application homepage",
+        "Verify multiple interactive elements exist (search bar, property cards, navigation menu)",
+        "Check for proper navigation structure with links to Search, Dashboard, Login",
+        "Verify property listings are displayed with images, prices, and details",
+        "Confirm application shows real estate features, not just 'Vite + React' placeholder text"
+      ],
+      "expectedOutcome": "Application displays a functional real estate platform with property listings, search capabilities, and interactive navigation",
+      "failureCondition": "If page only shows 'Vite + React' placeholder or lacks property listing functionality, this test FAILS"
+    },
+    {
+      "id": "func-002",
+      "name": "Landing Page Content Test",
+      "category": "functionality",
+      "priority": "high",
+      "description": "Verify landing page displays property listings and search functionality",
+      "preconditions": [],
+      "steps": [
+        "Navigate to homepage",
+        "Check for hero section with search functionality",
+        "Verify featured properties section displays property cards",
+        "Confirm each property card shows: image, title, price, location, bedrooms, bathrooms",
+        "Check for 'View Details' or similar call-to-action buttons"
+      ],
+      "expectedOutcome": "Landing page displays professional real estate content with search and featured properties",
+      "testData": {
+        "expected_properties": 3,
+        "expected_fields": ["title", "price", "location", "bedrooms", "bathrooms"]
+      }
+    },
+    {
+      "id": "auth-001",
+      "name": "User Registration Test",
+      "category": "authentication",
+      "priority": "critical",
+      "description": "Test user registration flow with valid data",
+      "preconditions": [],
+      "steps": [
+        "Navigate to registration page",
+        "Fill in registration form: email, password, full name, phone (optional)",
+        "Submit registration form",
+        "Verify success message is displayed",
+        "Verify JWT token is returned",
+        "Verify user is redirected to dashboard or prompted to verify email"
+      ],
+      "expectedOutcome": "User successfully registers and receives authentication token",
+      "testData": {
+        "email": "newuser@test.com",
+        "password": "TestPass123!",
+        "full_name": "Test User",
+        "phone_number": "555-9999"
+      },
+      "api_endpoint": "/api/auth/register"
+    },
+    {
+      "id": "auth-002",
+      "name": "User Login Test",
+      "category": "authentication",
+      "priority": "critical",
+      "description": "Test user login with valid credentials",
+      "preconditions": [],
+      "steps": [
+        "Navigate to login page",
+        "Enter email: john.smith@example.com",
+        "Enter password: password123",
+        "Click login button",
+        "Verify successful login",
+        "Verify JWT token is received",
+        "Verify redirect to user dashboard"
+      ],
+      "expectedOutcome": "User successfully logs in and is redirected to dashboard with valid session",
+      "testData": {
+        "email": "john.smith@example.com",
+        "password": "password123"
+      },
+      "api_endpoint": "/api/auth/login"
+    },
+    {
+      "id": "auth-003",
+      "name": "Agent Login Test",
+      "category": "authentication",
+      "priority": "critical",
+      "description": "Test agent login with approved agent credentials",
+      "preconditions": ["Agent must be approved"],
+      "steps": [
+        "Navigate to agent login page",
+        "Enter email: robert.williams@realty.com",
+        "Enter password: agent123",
+        "Click login button",
+        "Verify successful login",
+        "Verify redirect to agent dashboard"
+      ],
+      "expectedOutcome": "Approved agent successfully logs in and accesses agent dashboard",
+      "testData": {
+        "email": "robert.williams@realty.com",
+        "password": "agent123"
+      },
+      "api_endpoint": "/api/auth/agent/login"
+    },
+    {
+      "id": "auth-004",
+      "name": "Agent Registration Requires Approval",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Verify agent registration creates account but requires admin approval before login",
+      "preconditions": [],
+      "steps": [
+        "Navigate to agent registration page",
+        "Fill in required agent information (email, password, license info, agency details)",
+        "Submit registration",
+        "Verify success message indicates approval is pending",
+        "Attempt to login with new agent credentials",
+        "Verify login is blocked with 'approval pending' message"
+      ],
+      "expectedOutcome": "Agent account is created but login is blocked until admin approves",
+      "testData": {
+        "email": "newagent@test.com",
+        "password": "AgentPass123!",
+        "full_name": "Test Agent",
+        "phone_number": "555-8888",
+        "license_number": "CA-TEST-12345",
+        "license_state": "CA",
+        "agency_name": "Test Realty",
+        "years_experience": "5"
+      },
+      "api_endpoint": "/api/auth/agent/register"
+    },
+    {
+      "id": "auth-005",
+      "name": "Invalid Login Credentials Test",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Verify proper error handling for invalid login credentials",
+      "preconditions": [],
+      "steps": [
+        "Navigate to login page",
+        "Enter email: invalid@example.com",
+        "Enter password: wrongpassword",
+        "Click login button",
+        "Verify error message is displayed: 'Invalid email or password'",
+        "Verify user is not logged in"
+      ],
+      "expectedOutcome": "Login fails with appropriate error message, no session created",
+      "testData": {
+        "email": "invalid@example.com",
+        "password": "wrongpassword"
+      }
+    },
+    {
+      "id": "auth-006",
+      "name": "Logout Test",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Verify user can successfully logout",
+      "preconditions": ["User must be logged in"],
+      "steps": [
+        "Login as user (john.smith@example.com)",
+        "Click logout button in navigation",
+        "Verify redirect to homepage or login page",
+        "Attempt to access protected route (e.g., /dashboard)",
+        "Verify redirect to login page"
+      ],
+      "expectedOutcome": "User is logged out and cannot access protected routes"
+    },
+    {
+      "id": "auth-007",
+      "name": "Password Reset Flow",
+      "category": "authentication",
+      "priority": "medium",
+      "description": "Test forgot password and reset password functionality",
+      "preconditions": [],
+      "steps": [
+        "Navigate to login page",
+        "Click 'Forgot Password' link",
+        "Enter email: john.smith@example.com",
+        "Submit form",
+        "Verify success message indicating email was sent",
+        "Check email_logs table for password_reset entry",
+        "Extract reset token from database",
+        "Navigate to reset password page with token",
+        "Enter new password",
+        "Verify success message",
+        "Login with new password"
+      ],
+      "expectedOutcome": "Password reset flow completes successfully and user can login with new password",
+      "api_endpoints": ["/api/auth/forgot-password", "/api/auth/reset-password"]
+    },
+    {
+      "id": "search-001",
+      "name": "Basic Property Search Test",
+      "category": "search",
+      "priority": "critical",
+      "description": "Verify basic property search functionality works",
+      "preconditions": [],
+      "steps": [
+        "Navigate to search page or use search bar on homepage",
+        "Verify search interface is displayed",
+        "Perform a search without any filters",
+        "Verify property results are displayed",
+        "Confirm results show property cards with essential information",
+        "Verify pagination works if more than 20 results"
+      ],
+      "expectedOutcome": "Search returns active properties with proper pagination",
+      "api_endpoint": "/api/properties"
+    },
+    {
+      "id": "search-002",
+      "name": "Property Search with Filters Test",
+      "category": "search",
+      "priority": "high",
+      "description": "Test property search with multiple filters applied",
+      "preconditions": [],
+      "steps": [
+        "Navigate to search page",
+        "Apply filters: listing_type=sale, property_type=house, min_price=1000000, max_price=5000000",
+        "Apply location filter: city=San Francisco, state=CA",
+        "Apply bedroom filter: bedrooms >= 3",
+        "Submit search",
+        "Verify results match filter criteria",
+        "Verify all returned properties are houses for sale in San Francisco with 3+ bedrooms"
+      ],
+      "expectedOutcome": "Search returns only properties matching all applied filters",
+      "testData": {
+        "filters": {
+          "listing_type": "sale",
+          "property_type": ["house"],
+          "min_price": 1000000,
+          "max_price": 5000000,
+          "city": "San Francisco",
+          "state": "CA",
+          "bedrooms": 3
+        }
+      },
+      "api_endpoint": "/api/properties"
+    },
+    {
+      "id": "search-003",
+      "name": "Search Sorting Test",
+      "category": "search",
+      "priority": "medium",
+      "description": "Verify search results can be sorted by different criteria",
+      "preconditions": [],
+      "steps": [
+        "Perform a basic property search",
+        "Sort by price (ascending)",
+        "Verify results are sorted from lowest to highest price",
+        "Sort by price (descending)",
+        "Verify results are sorted from highest to lowest price",
+        "Sort by newest listings (created_at desc)",
+        "Verify results show newest properties first"
+      ],
+      "expectedOutcome": "Search results properly sort based on selected criteria",
+      "testData": {
+        "sort_options": ["price_asc", "price_desc", "created_at_desc", "square_footage_desc"]
+      }
+    },
+    {
+      "id": "search-004",
+      "name": "Featured Properties Display",
+      "category": "search",
+      "priority": "medium",
+      "description": "Verify featured properties are displayed prominently",
+      "preconditions": ["At least one property must be marked as featured"],
+      "steps": [
+        "Navigate to homepage",
+        "Verify featured properties section exists",
+        "Confirm featured properties have special styling or badge",
+        "Filter search for featured properties only (is_featured=true)",
+        "Verify only featured properties are returned"
+      ],
+      "expectedOutcome": "Featured properties are properly displayed and filterable",
+      "testData": {
+        "expected_featured_count": 3
+      }
+    },
+    {
+      "id": "prop-001",
+      "name": "Property Detail View Test",
+      "category": "property",
+      "priority": "critical",
+      "description": "Verify property detail page displays all property information",
+      "preconditions": [],
+      "steps": [
+        "Navigate to search results",
+        "Click on a property card to view details",
+        "Verify property detail page displays: title, price, address, bedrooms, bathrooms, square footage",
+        "Verify property photos/gallery is displayed",
+        "Verify property description is shown",
+        "Verify amenities and features list is displayed",
+        "Verify agent information is shown (name, agency, contact button)",
+        "Verify 'Contact Agent' or inquiry form is available"
+      ],
+      "expectedOutcome": "Property detail page displays comprehensive property information",
+      "testData": {
+        "property_id": "prop_001",
+        "expected_fields": [
+          "title",
+          "price",
+          "bedrooms",
+          "bathrooms",
+          "square_footage",
+          "description",
+          "agent_name"
+        ]
+      },
+      "api_endpoint": "/api/properties/prop_001"
+    },
+    {
+      "id": "prop-002",
+      "name": "Property Photo Gallery Test",
+      "category": "property",
+      "priority": "medium",
+      "description": "Verify property photo gallery functionality",
+      "preconditions": ["Property must have multiple photos"],
+      "steps": [
+        "Navigate to property detail page (prop_001)",
+        "Verify primary photo is displayed prominently",
+        "Verify thumbnail gallery of additional photos",
+        "Click on thumbnails to change main image",
+        "Verify image navigation works (next/previous buttons)",
+        "Verify full-screen/lightbox functionality if available"
+      ],
+      "expectedOutcome": "Photo gallery displays all property images with smooth navigation",
+      "testData": {
+        "property_id": "prop_001",
+        "expected_photo_count": 5
+      }
+    },
+    {
+      "id": "inquiry-001",
+      "name": "Submit Property Inquiry as Guest",
+      "category": "inquiry",
+      "priority": "high",
+      "description": "Test submitting an inquiry without being logged in",
+      "preconditions": [],
+      "steps": [
+        "Navigate to property detail page (prop_001)",
+        "Fill out inquiry form with: name, email, phone, message",
+        "Optionally request viewing with date and time",
+        "Submit inquiry",
+        "Verify success message is displayed",
+        "Verify inquiry is created in database",
+        "Verify agent receives notification (check email_logs)"
+      ],
+      "expectedOutcome": "Guest can submit inquiry and agent is notified",
+      "testData": {
+        "property_id": "prop_001",
+        "agent_id": "agent_001",
+        "inquirer_name": "Test Inquirer",
+        "inquirer_email": "test@example.com",
+        "inquirer_phone": "555-7777",
+        "message": "I am interested in viewing this property",
+        "viewing_requested": true,
+        "preferred_viewing_date": "2025-01-20",
+        "preferred_viewing_time": "2:00 PM"
+      },
+      "api_endpoint": "/api/inquiries"
+    },
+    {
+      "id": "inquiry-002",
+      "name": "Submit Property Inquiry as Logged-in User",
+      "category": "inquiry",
+      "priority": "high",
+      "description": "Test submitting an inquiry while logged in",
+      "preconditions": ["User must be logged in"],
+      "steps": [
+        "Login as user (john.smith@example.com)",
+        "Navigate to property detail page",
+        "Verify inquiry form is pre-filled with user information",
+        "Modify message if needed",
+        "Submit inquiry",
+        "Verify success message",
+        "Navigate to user dashboard",
+        "Verify inquiry appears in 'My Inquiries' section"
+      ],
+      "expectedOutcome": "Logged-in user can submit inquiry with pre-filled data and track it in dashboard",
+      "testData": {
+        "user_email": "john.smith@example.com",
+        "property_id": "prop_002"
+      }
+    },
+    {
+      "id": "fav-001",
+      "name": "Add Property to Favorites",
+      "category": "favorites",
+      "priority": "high",
+      "description": "Test adding a property to user favorites",
+      "preconditions": ["User must be logged in"],
+      "steps": [
+        "Login as user (sarah.johnson@example.com)",
+        "Navigate to property detail page (prop_005)",
+        "Click 'Add to Favorites' or heart icon",
+        "Verify visual feedback (heart icon fills, success message)",
+        "Navigate to 'Saved Properties' page in user dashboard",
+        "Verify property appears in favorites list"
+      ],
+      "expectedOutcome": "Property is successfully added to user's favorites and appears in saved properties",
+      "testData": {
+        "user_email": "sarah.johnson@example.com",
+        "property_id": "prop_005"
+      },
+      "api_endpoint": "/api/favorites"
+    },
+    {
+      "id": "fav-002",
+      "name": "Remove Property from Favorites",
+      "category": "favorites",
+      "priority": "medium",
+      "description": "Test removing a property from favorites",
+      "preconditions": ["User must be logged in", "Property must be in favorites"],
+      "steps": [
+        "Login as user with existing favorites",
+        "Navigate to 'Saved Properties' page",
+        "Click 'Remove' or unfilled heart icon on a property",
+        "Verify property is removed from list",
+        "Navigate to property detail page",
+        "Verify favorite icon is no longer filled"
+      ],
+      "expectedOutcome": "Property is successfully removed from favorites",
+      "api_endpoint": "/api/favorites/:favorite_id (DELETE)"
+    },
+    {
+      "id": "fav-003",
+      "name": "Favorites Require Authentication",
+      "category": "favorites",
+      "priority": "high",
+      "description": "Verify favorites feature requires user to be logged in",
+      "preconditions": ["User must be logged out"],
+      "steps": [
+        "Ensure user is logged out",
+        "Navigate to property detail page",
+        "Attempt to click 'Add to Favorites' button",
+        "Verify user is prompted to login or redirected to login page",
+        "Verify favorite is not added without authentication"
+      ],
+      "expectedOutcome": "Unauthenticated users cannot add favorites and are prompted to login"
+    },
+    {
+      "id": "agent-001",
+      "name": "Agent Create Listing Test",
+      "category": "agent",
+      "priority": "critical",
+      "description": "Test agent creating a new property listing",
+      "preconditions": ["Agent must be logged in and approved"],
+      "steps": [
+        "Login as approved agent (robert.williams@realty.com)",
+        "Navigate to agent dashboard",
+        "Click 'Create New Listing' button",
+        "Fill in required property information: title, description, listing type, property type, price, address, bedrooms, bathrooms, square footage",
+        "Set status to 'draft' or 'active'",
+        "Submit form",
+        "Verify success message",
+        "Verify listing appears in agent's listings page"
+      ],
+      "expectedOutcome": "Agent successfully creates new property listing",
+      "testData": {
+        "agent_email": "robert.williams@realty.com",
+        "property_data": {
+          "title": "Test Property Listing",
+          "description": "This is a test property created for testing purposes with sufficient description length.",
+          "listing_type": "sale",
+          "property_type": "house",
+          "status": "draft",
+          "price": 500000,
+          "address_street": "123 Test Street",
+          "address_city": "San Francisco",
+          "address_state": "CA",
+          "address_zip": "94102",
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "square_footage": 1500
+        }
+      },
+      "api_endpoint": "/api/properties (POST)"
+    },
+    {
+      "id": "agent-002",
+      "name": "Agent View Inquiries Test",
+      "category": "agent",
+      "priority": "high",
+      "description": "Verify agent can view and respond to property inquiries",
+      "preconditions": ["Agent must be logged in", "Agent must have properties with inquiries"],
+      "steps": [
+        "Login as agent (robert.williams@realty.com)",
+        "Navigate to 'Inquiries' page in agent dashboard",
+        "Verify list of inquiries is displayed",
+        "Verify each inquiry shows: property, inquirer name, message, date, status",
+        "Click on an inquiry to view details",
+        "Verify option to reply to inquiry",
+        "Verify option to mark inquiry status (responded, scheduled, completed)"
+      ],
+      "expectedOutcome": "Agent can view all inquiries and access reply functionality",
+      "testData": {
+        "agent_email": "robert.williams@realty.com",
+        "expected_inquiry_count": 3
+      }
+    },
+    {
+      "id": "agent-003",
+      "name": "Agent Edit Listing Test",
+      "category": "agent",
+      "priority": "high",
+      "description": "Verify agent can edit their own property listings",
+      "preconditions": ["Agent must be logged in", "Agent must have at least one listing"],
+      "steps": [
+        "Login as agent",
+        "Navigate to 'My Listings' page",
+        "Click 'Edit' on a property",
+        "Modify property details (e.g., change price, update description)",
+        "Save changes",
+        "Verify success message",
+        "Verify changes are reflected on property detail page"
+      ],
+      "expectedOutcome": "Agent successfully edits listing and changes are saved",
+      "api_endpoint": "/api/properties/:property_id (PUT)"
+    },
+    {
+      "id": "agent-004",
+      "name": "Agent Cannot Edit Other Agent's Listings",
+      "category": "agent",
+      "priority": "high",
+      "description": "Verify agents can only edit their own listings",
+      "preconditions": ["Agent must be logged in"],
+      "steps": [
+        "Login as agent_001",
+        "Attempt to access edit page for property owned by agent_002",
+        "Verify access is denied (403 Forbidden or redirect)",
+        "Verify property is not editable"
+      ],
+      "expectedOutcome": "Agent cannot edit properties owned by other agents"
+    },
+    {
+      "id": "agent-005",
+      "name": "Agent Dashboard Analytics Test",
+      "category": "agent",
+      "priority": "medium",
+      "description": "Verify agent dashboard displays analytics and statistics",
+      "preconditions": ["Agent must be logged in with active listings"],
+      "steps": [
+        "Login as agent (robert.williams@realty.com)",
+        "Navigate to agent dashboard",
+        "Verify dashboard displays: total views, total inquiries, total favorites",
+        "Verify active listings count is shown",
+        "Verify recent activity or inquiries are displayed",
+        "Check if performance charts/graphs are shown"
+      ],
+      "expectedOutcome": "Agent dashboard displays relevant analytics and performance metrics",
+      "testData": {
+        "agent_email": "robert.williams@realty.com"
+      }
+    },
+    {
+      "id": "admin-001",
+      "name": "Admin View Agent Approvals",
+      "category": "admin",
+      "priority": "critical",
+      "description": "Verify admin can view pending agent registrations",
+      "preconditions": ["Admin must be logged in"],
+      "steps": [
+        "Login as admin (admin@realestate.com)",
+        "Navigate to 'Agent Approvals' page",
+        "Verify list of pending agent registrations is displayed",
+        "Verify each entry shows: agent name, email, license info, registration date",
+        "Verify filter/sort options for pending, approved, rejected"
+      ],
+      "expectedOutcome": "Admin can view all agent registration requests",
+      "testData": {
+        "admin_email": "admin@realestate.com"
+      }
+    },
+    {
+      "id": "admin-002",
+      "name": "Admin Approve Agent Test",
+      "category": "admin",
+      "priority": "critical",
+      "description": "Test admin approving an agent registration",
+      "preconditions": ["Admin must be logged in", "Pending agent registration must exist"],
+      "steps": [
+        "Login as admin",
+        "Navigate to 'Agent Approvals' page",
+        "Find a pending agent registration",
+        "Click 'Approve' button",
+        "Verify confirmation dialog",
+        "Confirm approval",
+        "Verify agent status changes to 'approved'",
+        "Verify agent can now login",
+        "Verify approval notification is sent (check email_logs)"
+      ],
+      "expectedOutcome": "Admin successfully approves agent and agent can login",
+      "api_endpoint": "/api/admin/agents/:agent_id/approve (PUT)"
+    },
+    {
+      "id": "admin-003",
+      "name": "Admin Reject Agent Test",
+      "category": "admin",
+      "priority": "high",
+      "description": "Test admin rejecting an agent registration with reason",
+      "preconditions": ["Admin must be logged in", "Pending agent registration must exist"],
+      "steps": [
+        "Login as admin",
+        "Navigate to 'Agent Approvals' page",
+        "Find a pending agent registration",
+        "Click 'Reject' button",
+        "Enter rejection reason",
+        "Confirm rejection",
+        "Verify agent status changes to 'rejected'",
+        "Verify rejection reason is saved",
+        "Verify agent cannot login"
+      ],
+      "expectedOutcome": "Admin successfully rejects agent with reason provided",
+      "testData": {
+        "rejection_reason": "Invalid license information provided"
+      }
+    },
+    {
+      "id": "admin-004",
+      "name": "Admin Manage Featured Listings",
+      "category": "admin",
+      "priority": "high",
+      "description": "Verify admin can feature/unfeature properties",
+      "preconditions": ["Admin must be logged in"],
+      "steps": [
+        "Login as admin",
+        "Navigate to 'Featured Listings' page",
+        "View list of all active properties",
+        "Select a property to feature",
+        "Set featured status, expiration date, and display order",
+        "Save changes",
+        "Verify property appears in featured section on homepage",
+        "Verify feature badge is displayed on property"
+      ],
+      "expectedOutcome": "Admin successfully features property with custom settings",
+      "api_endpoint": "/api/admin/properties/:property_id/feature (PUT)"
+    },
+    {
+      "id": "admin-005",
+      "name": "Admin Review Reported Listings",
+      "category": "admin",
+      "priority": "high",
+      "description": "Verify admin can review and resolve property reports",
+      "preconditions": ["Admin must be logged in", "Property reports must exist"],
+      "steps": [
+        "Login as admin",
+        "Navigate to 'Reported Listings' page",
+        "Verify list of property reports is displayed",
+        "Verify each report shows: property, reporter, reason, details, date",
+        "Click on a report to view details",
+        "Verify options to: resolve, dismiss, take action",
+        "Add admin notes",
+        "Mark as resolved or dismissed",
+        "Verify status update is saved"
+      ],
+      "expectedOutcome": "Admin can review, investigate, and resolve property reports",
+      "testData": {
+        "expected_report_count": 2
+      }
+    },
+    {
+      "id": "ui-001",
+      "name": "UI Components Test",
+      "category": "interface",
+      "priority": "high",
+      "description": "Verify UI components are properly implemented and functional",
+      "preconditions": [],
+      "steps": [
+        "Navigate through main pages (home, search, login, register)",
+        "Verify buttons are clickable and styled consistently",
+        "Check forms have proper input fields with labels",
+        "Verify navigation menu exists with proper links",
+        "Test dropdown menus and modals work correctly",
+        "Verify error messages display properly",
+        "Check loading states and spinners",
+        "Verify toasts/notifications appear for actions"
+      ],
+      "expectedOutcome": "All UI components are functional with consistent styling"
+    },
+    {
+      "id": "ui-002",
+      "name": "Responsive Design Test",
+      "category": "interface",
+      "priority": "medium",
+      "description": "Verify application is responsive across different screen sizes",
+      "preconditions": [],
+      "steps": [
+        "View application on desktop (1920x1080)",
+        "Verify layout is proper with all elements visible",
+        "Resize to tablet size (768x1024)",
+        "Verify responsive menu activates",
+        "Verify property grid adjusts to fewer columns",
+        "Resize to mobile size (375x667)",
+        "Verify mobile navigation menu works",
+        "Verify content stacks vertically",
+        "Verify forms remain usable"
+      ],
+      "expectedOutcome": "Application adapts properly to all screen sizes"
+    },
+    {
+      "id": "ui-003",
+      "name": "Navigation Test",
+      "category": "interface",
+      "priority": "high",
+      "description": "Verify all navigation links work correctly",
+      "preconditions": [],
+      "steps": [
+        "Check header navigation links: Home, Search, About, Contact",
+        "Verify user menu shows: Dashboard, Saved Properties, Inquiries, Account, Logout (when logged in)",
+        "Verify agent menu shows: Dashboard, Listings, Inquiries, Profile, Settings (for agents)",
+        "Verify admin menu shows: Dashboard, Agent Approvals, Featured Listings, Reports (for admins)",
+        "Click each link and verify navigation works",
+        "Verify footer links work: Privacy, Terms, Contact"
+      ],
+      "expectedOutcome": "All navigation links function correctly and lead to appropriate pages"
+    },
+    {
+      "id": "valid-001",
+      "name": "Form Validation - Registration",
+      "category": "validation",
+      "priority": "high",
+      "description": "Test form validation on registration form",
+      "preconditions": [],
+      "steps": [
+        "Navigate to registration page",
+        "Submit form with empty fields",
+        "Verify error messages appear for required fields",
+        "Enter invalid email format",
+        "Verify email validation error",
+        "Enter password less than 8 characters",
+        "Verify password length error",
+        "Enter valid data and submit",
+        "Verify form submits successfully"
+      ],
+      "expectedOutcome": "Form validation prevents invalid submissions with clear error messages",
+      "testData": {
+        "invalid_cases": [
+          {"email": "notanemail", "expected_error": "Invalid email format"},
+          {"password": "short", "expected_error": "Password must be at least 8 characters"},
+          {"full_name": "", "expected_error": "Full name is required"}
+        ]
+      }
+    },
+    {
+      "id": "valid-002",
+      "name": "Property Search Input Validation",
+      "category": "validation",
+      "priority": "medium",
+      "description": "Test validation on property search filters",
+      "preconditions": [],
+      "steps": [
+        "Navigate to search page",
+        "Enter min_price greater than max_price",
+        "Verify validation error",
+        "Enter negative price values",
+        "Verify price must be positive",
+        "Enter non-numeric values in numeric fields",
+        "Verify proper error handling",
+        "Enter valid filters and search",
+        "Verify search executes successfully"
+      ],
+      "expectedOutcome": "Search form validates input and prevents invalid searches"
+    },
+    {
+      "id": "valid-003",
+      "name": "Property Listing Creation Validation",
+      "category": "validation",
+      "priority": "high",
+      "description": "Test validation when agent creates property listing",
+      "preconditions": ["Agent must be logged in"],
+      "steps": [
+        "Login as agent",
+        "Navigate to create listing form",
+        "Attempt to submit with required fields empty",
+        "Verify validation errors for: title, description, price, address, bedrooms, bathrooms, square_footage",
+        "Enter description shorter than minimum length (50 characters)",
+        "Verify description length error",
+        "Enter negative price or square footage",
+        "Verify positive number validation",
+        "Enter valid data and submit",
+        "Verify listing is created"
+      ],
+      "expectedOutcome": "Property creation form enforces all validation rules from Zod schema"
+    },
+    {
+      "id": "error-001",
+      "name": "404 Page Not Found Test",
+      "category": "error_handling",
+      "priority": "medium",
+      "description": "Verify 404 page displays for invalid routes",
+      "preconditions": [],
+      "steps": [
+        "Navigate to invalid route: /nonexistent-page",
+        "Verify 404 error page is displayed",
+        "Verify page shows helpful message",
+        "Verify link to return home is provided"
+      ],
+      "expectedOutcome": "404 page displays with navigation back to valid pages"
+    },
+    {
+      "id": "error-002",
+      "name": "API Error Handling Test",
+      "category": "error_handling",
+      "priority": "high",
+      "description": "Verify proper handling of API errors",
+      "preconditions": [],
+      "steps": [
+        "Trigger various API errors (400, 401, 403, 404, 500)",
+        "Verify appropriate error messages display to user",
+        "Verify 401 Unauthorized redirects to login",
+        "Verify 403 Forbidden shows access denied message",
+        "Verify 404 Not Found shows resource not found message",
+        "Verify 500 Server Error shows generic error message"
+      ],
+      "expectedOutcome": "Application handles all API errors gracefully with user-friendly messages"
+    },
+    {
+      "id": "error-003",
+      "name": "Network Error Handling",
+      "category": "error_handling",
+      "priority": "medium",
+      "description": "Test behavior when network connection is lost",
+      "preconditions": [],
+      "steps": [
+        "Load application",
+        "Simulate network disconnect",
+        "Attempt actions that require API calls",
+        "Verify appropriate error messages display",
+        "Verify retry mechanism if implemented",
+        "Restore network connection",
+        "Verify application recovers"
+      ],
+      "expectedOutcome": "Application handles network errors gracefully and recovers when connection restored"
+    },
+    {
+      "id": "perf-001",
+      "name": "Page Load Performance Test",
+      "category": "performance",
+      "priority": "medium",
+      "description": "Verify pages load within acceptable time",
+      "preconditions": [],
+      "steps": [
+        "Measure homepage load time",
+        "Verify load time is under 3 seconds",
+        "Measure search results page load time",
+        "Verify results load within 2 seconds",
+        "Measure property detail page load time",
+        "Verify detail page loads within 2 seconds"
+      ],
+      "expectedOutcome": "All pages load within acceptable performance thresholds"
+    },
+    {
+      "id": "perf-002",
+      "name": "Search Performance Test",
+      "category": "performance",
+      "priority": "medium",
+      "description": "Verify property search returns results quickly",
+      "preconditions": [],
+      "steps": [
+        "Perform search with no filters",
+        "Measure response time",
+        "Verify results return within 1 second",
+        "Perform search with multiple filters",
+        "Measure response time",
+        "Verify filtered results return within 1.5 seconds"
+      ],
+      "expectedOutcome": "Search queries execute efficiently with fast response times"
+    },
+    {
+      "id": "perf-003",
+      "name": "Image Loading Optimization",
+      "category": "performance",
+      "priority": "low",
+      "description": "Verify property images are optimized and load efficiently",
+      "preconditions": [],
+      "steps": [
+        "Navigate to property listings page",
+        "Verify images load progressively",
+        "Check if lazy loading is implemented",
+        "Verify thumbnail images are smaller file sizes",
+        "Navigate to property detail page",
+        "Verify gallery images load on demand"
+      ],
+      "expectedOutcome": "Images are optimized and load efficiently without blocking page render"
+    },
+    {
+      "id": "sec-001",
+      "name": "SQL Injection Prevention Test",
+      "category": "security",
+      "priority": "critical",
+      "description": "Verify application is protected against SQL injection",
+      "preconditions": [],
+      "steps": [
+        "Navigate to search page",
+        "Enter SQL injection attempt in search field: ' OR '1'='1",
+        "Submit search",
+        "Verify injection is not executed",
+        "Verify proper error handling or safe results",
+        "Test injection in login form",
+        "Verify authentication is not bypassed"
+      ],
+      "expectedOutcome": "Application properly sanitizes inputs and prevents SQL injection attacks",
+      "security_note": "PostgreSQL parameterized queries should prevent injection"
+    },
+    {
+      "id": "sec-002",
+      "name": "XSS Prevention Test",
+      "category": "security",
+      "priority": "critical",
+      "description": "Verify application prevents cross-site scripting attacks",
+      "preconditions": [],
+      "steps": [
+        "Login as user",
+        "Attempt to submit inquiry with script tag: <script>alert('XSS')</script>",
+        "Submit form",
+        "View inquiry as agent",
+        "Verify script is not executed",
+        "Verify content is properly escaped",
+        "Test in other user input fields (property description, comments)"
+      ],
+      "expectedOutcome": "All user inputs are properly escaped and XSS attacks are prevented"
+    },
+    {
+      "id": "sec-003",
+      "name": "Authentication Token Security",
+      "category": "security",
+      "priority": "critical",
+      "description": "Verify JWT tokens are properly secured",
+      "preconditions": [],
+      "steps": [
+        "Login as user",
+        "Inspect JWT token in localStorage/cookies",
+        "Verify token has appropriate expiration time",
+        "Attempt to use expired token",
+        "Verify access is denied with expired token",
+        "Attempt to modify token payload",
+        "Verify modified token is rejected",
+        "Test token is invalidated on logout"
+      ],
+      "expectedOutcome": "JWT tokens are properly validated and secured"
+    },
+    {
+      "id": "sec-004",
+      "name": "CORS Configuration Test",
+      "category": "security",
+      "priority": "high",
+      "description": "Verify CORS is properly configured",
+      "preconditions": [],
+      "steps": [
+        "Check API response headers for CORS configuration",
+        "Verify Access-Control-Allow-Origin is set appropriately",
+        "Test API requests from allowed origins succeed",
+        "Test API requests from unauthorized origins are blocked (if applicable)"
+      ],
+      "expectedOutcome": "CORS is properly configured for security while allowing legitimate requests"
+    },
+    {
+      "id": "data-001",
+      "name": "Property View Count Tracking",
+      "category": "data_integrity",
+      "priority": "medium",
+      "description": "Verify property views are tracked correctly",
+      "preconditions": [],
+      "steps": [
+        "Note initial view count for property (prop_001)",
+        "View property detail page",
+        "Verify view count increments by 1",
+        "View same property multiple times",
+        "Verify view tracking behavior (increment each time or deduplicate by session)",
+        "Check property_views table for logged views"
+      ],
+      "expectedOutcome": "Property views are accurately tracked and stored",
+      "testData": {
+        "property_id": "prop_001"
+      }
+    },
+    {
+      "id": "data-002",
+      "name": "Inquiry Count Tracking",
+      "category": "data_integrity",
+      "priority": "medium",
+      "description": "Verify inquiry count increments when inquiry is submitted",
+      "preconditions": [],
+      "steps": [
+        "Note initial inquiry_count for property",
+        "Submit an inquiry about the property",
+        "Verify inquiry_count increments by 1",
+        "Check inquiries table for new entry",
+        "Verify property inquiry count matches actual inquiry records"
+      ],
+      "expectedOutcome": "Inquiry counts are accurately maintained",
+      "testData": {
+        "property_id": "prop_005"
+      }
+    },
+    {
+      "id": "data-003",
+      "name": "Favorite Count Synchronization",
+      "category": "data_integrity",
+      "priority": "medium",
+      "description": "Verify favorite count stays synchronized with favorites table",
+      "preconditions": ["User must be logged in"],
+      "steps": [
+        "Login as user",
+        "Note initial favorite_count for property",
+        "Add property to favorites",
+        "Verify favorite_count increments by 1",
+        "Remove property from favorites",
+        "Verify favorite_count decrements by 1",
+        "Verify count matches actual favorite records in favorites table"
+      ],
+      "expectedOutcome": "Favorite counts remain accurate and synchronized",
+      "testData": {
+        "property_id": "prop_003",
+        "user_email": "michael.chen@example.com"
+      }
+    }
+  ],
+  "test_execution_notes": {
+    "test_users": "See test_users.json for valid login credentials",
+    "test_order": "Execute in order: Functionality → Authentication → Search → CRUD → Role-Based → Validation → Error Handling → Performance → Security",
+    "critical_tests": "Tests marked as 'critical' priority must pass for application to be considered functional",
+    "automation": "These test cases can be automated using tools like Cypress, Playwright, or Selenium",
+    "api_testing": "API endpoints can be tested directly using Postman, curl, or automated API testing tools"
+  }
+}

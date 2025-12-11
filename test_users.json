@@ -1,0 +1,336 @@
+{
+  "generated_at": "2025-01-11T10:30:00Z",
+  "frontend_url": "https://123real-estate-listing-site-with.launchpulse.ai",
+  "backend_url": "https://123real-estate-listing-site-with.launchpulse.ai",
+  "user_structure": {
+    "tables": {
+      "users": {
+        "id_field": "user_id",
+        "email_field": "email",
+        "password_field": "password_hash",
+        "registration_endpoint": "/api/auth/register",
+        "login_endpoint": "/api/auth/login"
+      },
+      "agents": {
+        "id_field": "agent_id",
+        "email_field": "email",
+        "password_field": "password_hash",
+        "registration_endpoint": "/api/auth/agent/register",
+        "login_endpoint": "/api/auth/agent/login",
+        "approval_required": true,
+        "approval_field": "approved",
+        "approval_status_field": "approval_status"
+      },
+      "admins": {
+        "id_field": "admin_id",
+        "email_field": "email",
+        "password_field": "password_hash",
+        "role_field": "role",
+        "login_endpoint": "/api/auth/admin/login"
+      }
+    }
+  },
+  "total_users": 13,
+  "verified_users": 13,
+  "password_note": "Seed data uses plain text passwords (not hashed) for testing purposes",
+  "users": [
+    {
+      "role": "user",
+      "user_id": "user_001",
+      "email": "john.smith@example.com",
+      "password": "password123",
+      "full_name": "John Smith",
+      "phone_number": "555-0101",
+      "email_verified": true,
+      "location": "San Francisco, CA",
+      "verified": true,
+      "description": "Regular user with verified email and saved properties"
+    },
+    {
+      "role": "user",
+      "user_id": "user_002",
+      "email": "sarah.johnson@example.com",
+      "password": "password123",
+      "full_name": "Sarah Johnson",
+      "phone_number": "555-0102",
+      "email_verified": true,
+      "location": "Los Angeles, CA",
+      "verified": true,
+      "description": "User interested in family homes"
+    },
+    {
+      "role": "user",
+      "user_id": "user_003",
+      "email": "michael.chen@example.com",
+      "password": "password123",
+      "full_name": "Michael Chen",
+      "phone_number": "555-0103",
+      "email_verified": true,
+      "location": "New York, NY",
+      "verified": true,
+      "description": "User looking for luxury penthouses"
+    },
+    {
+      "role": "user",
+      "user_id": "user_004",
+      "email": "emma.davis@example.com",
+      "password": "password123",
+      "full_name": "Emma Davis",
+      "phone_number": "555-0104",
+      "email_verified": true,
+      "location": "Miami, FL",
+      "verified": true,
+      "description": "User interested in waterfront properties"
+    },
+    {
+      "role": "user",
+      "user_id": "user_005",
+      "email": "david.martinez@example.com",
+      "password": "password123",
+      "full_name": "David Martinez",
+      "phone_number": "555-0105",
+      "email_verified": false,
+      "location": "Austin, TX",
+      "verified": false,
+      "description": "Unverified user account for testing email verification"
+    },
+    {
+      "role": "agent",
+      "agent_id": "agent_001",
+      "email": "robert.williams@realty.com",
+      "password": "agent123",
+      "full_name": "Robert Williams",
+      "phone_number": "555-1001",
+      "license_number": "CA-DRE-12345678",
+      "license_state": "CA",
+      "agency_name": "Premier Realty Group",
+      "years_experience": "12",
+      "approved": true,
+      "approval_status": "approved",
+      "account_status": "active",
+      "verified": true,
+      "description": "Senior Real Estate Broker in San Francisco - Approved agent with active listings"
+    },
+    {
+      "role": "agent",
+      "agent_id": "agent_002",
+      "email": "jennifer.lee@homes.com",
+      "password": "agent123",
+      "full_name": "Jennifer Lee",
+      "phone_number": "555-1002",
+      "license_number": "CA-DRE-87654321",
+      "license_state": "CA",
+      "agency_name": "Dream Homes Realty",
+      "years_experience": "8",
+      "approved": true,
+      "approval_status": "approved",
+      "account_status": "active",
+      "verified": true,
+      "description": "Real Estate Specialist in Los Angeles - Approved agent"
+    },
+    {
+      "role": "agent",
+      "agent_id": "agent_003",
+      "email": "thomas.garcia@elite.com",
+      "password": "agent123",
+      "full_name": "Thomas Garcia",
+      "phone_number": "555-1003",
+      "license_number": "NY-LIC-98765432",
+      "license_state": "NY",
+      "agency_name": "Elite Property Management",
+      "years_experience": "15",
+      "approved": true,
+      "approval_status": "approved",
+      "account_status": "active",
+      "verified": true,
+      "description": "Managing Broker in New York - Approved agent with luxury listings"
+    },
+    {
+      "role": "agent",
+      "agent_id": "agent_004",
+      "email": "maria.rodriguez@coastal.com",
+      "password": "agent123",
+      "full_name": "Maria Rodriguez",
+      "phone_number": "555-1004",
+      "license_number": "FL-LIC-55443322",
+      "license_state": "FL",
+      "agency_name": "Coastal Living Realty",
+      "years_experience": "6",
+      "approved": true,
+      "approval_status": "approved",
+      "account_status": "active",
+      "verified": true,
+      "description": "Luxury Real Estate Advisor in Miami - Waterfront specialist"
+    },
+    {
+      "role": "agent",
+      "agent_id": "agent_005",
+      "email": "patrick.obrien@metro.com",
+      "password": "agent123",
+      "full_name": "Patrick O'Brien",
+      "phone_number": "555-1005",
+      "license_number": "TX-LIC-11223344",
+      "license_state": "TX",
+      "agency_name": "Metro City Realty",
+      "years_experience": "10",
+      "approved": true,
+      "approval_status": "approved",
+      "account_status": "active",
+      "verified": true,
+      "description": "Real Estate Broker in Austin - Relocation specialist"
+    },
+    {
+      "role": "admin",
+      "admin_id": "admin_001",
+      "email": "admin@realestate.com",
+      "password": "admin123",
+      "full_name": "System Administrator",
+      "admin_role": "admin",
+      "verified": true,
+      "description": "Full admin access - Can approve agents, manage featured listings, review reports"
+    },
+    {
+      "role": "admin",
+      "admin_id": "admin_002",
+      "email": "moderator@realestate.com",
+      "password": "moderator123",
+      "full_name": "Sarah Moderator",
+      "admin_role": "moderator",
+      "verified": true,
+      "description": "Moderator access - Can review and resolve property reports"
+    }
+  ],
+  "by_role": {
+    "user": [
+      {
+        "email": "john.smith@example.com",
+        "password": "password123",
+        "full_name": "John Smith",
+        "verified": true,
+        "has_favorites": true,
+        "has_inquiries": true
+      },
+      {
+        "email": "sarah.johnson@example.com",
+        "password": "password123",
+        "full_name": "Sarah Johnson",
+        "verified": true,
+        "has_favorites": true,
+        "has_inquiries": true
+      },
+      {
+        "email": "michael.chen@example.com",
+        "password": "password123",
+        "full_name": "Michael Chen",
+        "verified": true,
+        "has_favorites": true,
+        "has_inquiries": true
+      },
+      {
+        "email": "emma.davis@example.com",
+        "password": "password123",
+        "full_name": "Emma Davis",
+        "verified": true,
+        "has_favorites": true,
+        "has_inquiries": true
+      },
+      {
+        "email": "david.martinez@example.com",
+        "password": "password123",
+        "full_name": "David Martinez",
+        "verified": false,
+        "has_favorites": true,
+        "has_inquiries": false
+      }
+    ],
+    "agent": [
+      {
+        "email": "robert.williams@realty.com",
+        "password": "agent123",
+        "full_name": "Robert Williams",
+        "verified": true,
+        "approved": true,
+        "has_listings": true,
+        "listing_count": 3,
+        "specialization": "Luxury Homes"
+      },
+      {
+        "email": "jennifer.lee@homes.com",
+        "password": "agent123",
+        "full_name": "Jennifer Lee",
+        "verified": true,
+        "approved": true,
+        "has_listings": true,
+        "listing_count": 4,
+        "specialization": "Family Homes"
+      },
+      {
+        "email": "thomas.garcia@elite.com",
+        "password": "agent123",
+        "full_name": "Thomas Garcia",
+        "verified": true,
+        "approved": true,
+        "has_listings": true,
+        "listing_count": 2,
+        "specialization": "Luxury Condos"
+      },
+      {
+        "email": "maria.rodriguez@coastal.com",
+        "password": "agent123",
+        "full_name": "Maria Rodriguez",
+        "verified": true,
+        "approved": true,
+        "has_listings": true,
+        "listing_count": 1,
+        "specialization": "Waterfront Properties"
+      },
+      {
+        "email": "patrick.obrien@metro.com",
+        "password": "agent123",
+        "full_name": "Patrick O'Brien",
+        "verified": true,
+        "approved": true,
+        "has_listings": true,
+        "listing_count": 2,
+        "specialization": "Relocation Services"
+      }
+    ],
+    "admin": [
+      {
+        "email": "admin@realestate.com",
+        "password": "admin123",
+        "full_name": "System Administrator",
+        "role": "admin",
+        "verified": true
+      },
+      {
+        "email": "moderator@realestate.com",
+        "password": "moderator123",
+        "full_name": "Sarah Moderator",
+        "role": "moderator",
+        "verified": true
+      }
+    ]
+  },
+  "test_data_summary": {
+    "total_properties": 12,
+    "active_properties": 12,
+    "featured_properties": 3,
+    "total_inquiries": 8,
+    "total_favorites": 12,
+    "open_houses": 3,
+    "property_types": ["house", "condo", "townhouse"],
+    "listing_types": ["sale", "rent"],
+    "locations": ["San Francisco, CA", "Los Angeles, CA", "New York, NY", "Miami, FL", "Austin, TX"]
+  },
+  "authentication_notes": {
+    "jwt_secret": "Stored in environment variable JWT_SECRET",
+    "token_expiry": {
+      "user": "7 days",
+      "agent": "30 days"
+    },
+    "password_storage": "Plain text in seed data (not production-safe)",
+    "email_verification_required": false,
+    "agent_approval_required": true
+  }
+}
