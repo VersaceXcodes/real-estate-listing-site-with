@@ -28,6 +28,39 @@ const getApiBaseUrl = (): string => {
 
 const API_BASE_URL = getApiBaseUrl();
 
+// Configure axios interceptors for better debugging and error handling
+axios.interceptors.request.use(
+  (config) => {
+    console.log(`[axios] ${config.method?.toUpperCase()} ${config.url}`, {
+      baseURL: config.baseURL,
+      headers: config.headers,
+      timeout: config.timeout
+    });
+    return config;
+  },
+  (error) => {
+    console.error('[axios] Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    console.log(`[axios] Response ${response.status} from ${response.config.url}`);
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      console.error(`[axios] Response error ${error.response.status}:`, error.response.data);
+    } else if (error.request) {
+      console.error('[axios] No response received:', error.request);
+    } else {
+      console.error('[axios] Request setup error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
 // ============================================================================
 // TYPES & INTERFACES (matching Zod schemas exactly)
 // ============================================================================
@@ -290,6 +323,8 @@ export const useAppStore = create<AppState>()(
       // ========== AUTHENTICATION ACTIONS ==========
       
       login_user: async (email: string, password: string) => {
+        console.log('[login_user] Starting login...', { email });
+        
         set((state) => ({
           authentication_state: {
             ...state.authentication_state,
@@ -307,11 +342,17 @@ export const useAppStore = create<AppState>()(
             { email, password },
             { 
               headers: { 'Content-Type': 'application/json' },
-              timeout: 10000 // 10 second timeout
+              timeout: 15000 // 15 second timeout
             }
           );
           
+          console.log('[login_user] Login successful');
+          
           const { user, token } = response.data;
+          
+          if (!user || !token) {
+            throw new Error('Invalid response from server: missing user or token');
+          }
           
           set((state) => ({
             authentication_state: {
@@ -337,10 +378,25 @@ export const useAppStore = create<AppState>()(
             get().load_user_notification_preferences().catch((error) => {
               console.error('Failed to load notification preferences after login:', error);
             });
-          }, 0);
+          }, 100);
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Login failed';
+          console.error('[login_user] Login failed:', error);
+          
+          // Enhanced error message extraction
+          let errorMessage = 'Login failed';
+          
+          if (error.code === 'ECONNABORTED') {
+            errorMessage = 'Request timed out. Please check your internet connection and try again.';
+          } else if (error.code === 'ERR_NETWORK') {
+            errorMessage = 'Network error. Please check your internet connection.';
+          } else if (error.response) {
+            errorMessage = error.response.data?.message || 
+                          error.response.data?.error?.message || 
+                          `Server error: ${error.response.status}`;
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
           
           set((state) => ({
             authentication_state: {
@@ -489,6 +545,8 @@ export const useAppStore = create<AppState>()(
       },
       
       register_user: async (data) => {
+        console.log('[register_user] Starting registration...', { email: data.email });
+        
         set((state) => ({
           authentication_state: {
             ...state.authentication_state,
@@ -501,16 +559,33 @@ export const useAppStore = create<AppState>()(
         }));
         
         try {
+          console.log('[register_user] Sending POST request to:', `${API_BASE_URL}/api/auth/register`);
+          
           const response = await axios.post(
             `${API_BASE_URL}/api/auth/register`,
             data,
             { 
               headers: { 'Content-Type': 'application/json' },
-              timeout: 10000 // 10 second timeout
+              timeout: 15000, // Increased timeout to 15 seconds
+              // Explicitly handle response transformation
+              transformResponse: [(data) => {
+                try {
+                  return JSON.parse(data);
+                } catch (e) {
+                  console.error('[register_user] Failed to parse response:', e);
+                  return data;
+                }
+              }]
             }
           );
           
+          console.log('[register_user] Registration successful:', response.data);
+          
           const { user, token } = response.data;
+          
+          if (!user || !token) {
+            throw new Error('Invalid response from server: missing user or token');
+          }
           
           // CRITICAL: Set is_loading to false IMMEDIATELY upon successful registration
           // This ensures the UI updates even if subsequent calls fail
@@ -530,6 +605,8 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
+          console.log('[register_user] State updated successfully');
+          
           // Load user data after registration (non-blocking, with error handling)
           // This happens AFTER setting is_loading to false to prevent UI freeze
           setTimeout(() => {
@@ -537,10 +614,32 @@ export const useAppStore = create<AppState>()(
               console.error('Failed to load notification preferences after registration:', error);
               // Continue anyway - user is registered and logged in
             });
-          }, 0);
+          }, 100);
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Registration failed';
+          console.error('[register_user] Registration failed:', error);
+          console.error('[register_user] Error details:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            code: error.code
+          });
+          
+          // Enhanced error message extraction
+          let errorMessage = 'Registration failed';
+          
+          if (error.code === 'ECONNABORTED') {
+            errorMessage = 'Request timed out. Please check your internet connection and try again.';
+          } else if (error.code === 'ERR_NETWORK') {
+            errorMessage = 'Network error. Please check your internet connection.';
+          } else if (error.response) {
+            // Server responded with an error
+            errorMessage = error.response.data?.message || 
+                          error.response.data?.error?.message || 
+                          `Server error: ${error.response.status}`;
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
           
           set((state) => ({
             authentication_state: {
@@ -557,6 +656,7 @@ export const useAppStore = create<AppState>()(
               error_message: errorMessage,
             },
           }));
+          
           throw new Error(errorMessage);
         }
       },
