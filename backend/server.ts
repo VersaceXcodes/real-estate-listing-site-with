@@ -7,6 +7,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Pool } from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import morgan from 'morgan';
+import bcrypt from 'bcryptjs';
 
 // Type extensions for Express Request
 interface AuthenticatedRequest extends Request {
@@ -177,12 +178,15 @@ app.post('/api/auth/register', async (req, res) => {
     const user_id = uuidv4();
     const email_verification_token = uuidv4();
     const now = new Date().toISOString();
+    
+    // Hash the password before storing
+    const password_hash = await bcrypt.hash(validated.password, 10);
 
     const result = await pool.query(
       `INSERT INTO users (user_id, email, password_hash, full_name, phone_number, email_verified, 
        email_verification_token, created_at, updated_at) 
        VALUES ($1, $2, $3, $4, $5, false, $6, $7, $8) RETURNING *`,
-      [user_id, validated.email.toLowerCase(), validated.password, validated.full_name, 
+      [user_id, validated.email.toLowerCase(), password_hash, validated.full_name, 
        validated.phone_number || null, email_verification_token, now, now]
     );
 
@@ -214,6 +218,7 @@ app.post('/api/auth/register', async (req, res) => {
       error: null
     });
   } catch (error) {
+    console.error('Registration error:', error);
     if (error.name === 'ZodError') {
       return res.status(400).json(createErrorResponse('Validation error', error, 'VALIDATION_ERROR'));
     }
@@ -226,8 +231,8 @@ app.post('/api/auth/login', async (req, res) => {
     const validated = loginInputSchema.parse(req.body);
     
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1 AND password_hash = $2',
-      [validated.email.toLowerCase(), validated.password]
+      'SELECT * FROM users WHERE email = $1',
+      [validated.email.toLowerCase()]
     );
 
     if (result.rows.length === 0) {
@@ -244,6 +249,23 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     const user = result.rows[0];
+    
+    // Compare password with hashed password
+    const passwordValid = await bcrypt.compare(validated.password, user.password_hash);
+    
+    if (!passwordValid) {
+      return res.status(401).json({
+        success: false,
+        token: null,
+        user: null,
+        agent: null,
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password'
+        }
+      });
+    }
+
     const token = jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '7d' });
 
     const now = new Date().toISOString();
@@ -265,6 +287,7 @@ app.post('/api/auth/login', async (req, res) => {
       error: null
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
   }
 });
@@ -281,6 +304,9 @@ app.post('/api/auth/agent/register', async (req, res) => {
     const agent_id = uuidv4();
     const email_verification_token = uuidv4();
     const now = new Date().toISOString();
+    
+    // Hash the password before storing
+    const password_hash = await bcrypt.hash(validated.password, 10);
 
     const result = await pool.query(
       `INSERT INTO agents (agent_id, email, password_hash, full_name, phone_number, license_number, 
@@ -289,7 +315,7 @@ app.post('/api/auth/agent/register', async (req, res) => {
        email_verification_token, account_status, created_at, updated_at) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, false, 'pending', false, $14, 'active', $15, $16) 
        RETURNING *`,
-      [agent_id, validated.email.toLowerCase(), validated.password, validated.full_name, validated.phone_number,
+      [agent_id, validated.email.toLowerCase(), password_hash, validated.full_name, validated.phone_number,
        validated.license_number, validated.license_state, validated.agency_name, validated.office_address_street,
        validated.office_address_city, validated.office_address_state, validated.office_address_zip,
        validated.years_experience, email_verification_token, now, now]
@@ -322,6 +348,7 @@ app.post('/api/auth/agent/register', async (req, res) => {
       error: null
     });
   } catch (error) {
+    console.error('Agent registration error:', error);
     if (error.name === 'ZodError') {
       return res.status(400).json(createErrorResponse('Validation error', error, 'VALIDATION_ERROR'));
     }
@@ -334,8 +361,8 @@ app.post('/api/auth/agent/login', async (req, res) => {
     const validated = loginInputSchema.parse(req.body);
     
     const result = await pool.query(
-      'SELECT * FROM agents WHERE email = $1 AND password_hash = $2',
-      [validated.email.toLowerCase(), validated.password]
+      'SELECT * FROM agents WHERE email = $1',
+      [validated.email.toLowerCase()]
     );
 
     if (result.rows.length === 0) {
@@ -349,6 +376,19 @@ app.post('/api/auth/agent/login', async (req, res) => {
     }
 
     const agent = result.rows[0];
+    
+    // Compare password with hashed password
+    const passwordValid = await bcrypt.compare(validated.password, agent.password_hash);
+    
+    if (!passwordValid) {
+      return res.status(401).json({
+        success: false,
+        token: null,
+        user: null,
+        agent: null,
+        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
+      });
+    }
 
     if (!agent.approved || agent.approval_status !== 'approved') {
       return res.status(401).json({
@@ -385,6 +425,7 @@ app.post('/api/auth/agent/login', async (req, res) => {
       error: null
     });
   } catch (error) {
+    console.error('Agent login error:', error);
     res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
   }
 });
@@ -466,11 +507,14 @@ app.post('/api/auth/reset-password', async (req, res) => {
   try {
     const validated = resetPasswordInputSchema.parse(req.body);
     const now = new Date().toISOString();
+    
+    // Hash the new password
+    const password_hash = await bcrypt.hash(validated.new_password, 10);
 
     const userResult = await pool.query(
       `UPDATE users SET password_hash = $1, password_reset_token = NULL, password_reset_expires = NULL, updated_at = $2 
        WHERE password_reset_token = $3 AND password_reset_expires > $4 RETURNING user_id`,
-      [validated.new_password, now, validated.token, now]
+      [password_hash, now, validated.token, now]
     );
 
     if (userResult.rows.length > 0) {
@@ -481,7 +525,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
     const agentResult = await pool.query(
       `UPDATE agents SET password_hash = $1, password_reset_token = NULL, password_reset_expires = NULL, updated_at = $2 
        WHERE password_reset_token = $3 AND password_reset_expires > $4 RETURNING agent_id`,
-      [validated.new_password, now, validated.token, now]
+      [password_hash, now, validated.token, now]
     );
 
     if (agentResult.rows.length > 0) {
@@ -491,6 +535,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
 
     res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
   } catch (error) {
+    console.error('Password reset error:', error);
     res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
   }
 });
@@ -502,36 +547,55 @@ app.post('/api/auth/change-password', authenticateToken, async (req: Authenticat
 
     if (req.userType === 'user' && req.user) {
       const result = await pool.query(
-        'SELECT user_id FROM users WHERE user_id = $1 AND password_hash = $2',
-        [req.user.user_id, validated.current_password]
+        'SELECT user_id, password_hash FROM users WHERE user_id = $1',
+        [req.user.user_id]
       );
 
       if (result.rows.length === 0) {
+        return res.status(401).json({ success: false, message: 'User not found' });
+      }
+
+      // Verify current password
+      const passwordValid = await bcrypt.compare(validated.current_password, result.rows[0].password_hash);
+      if (!passwordValid) {
         return res.status(401).json({ success: false, message: 'Current password is incorrect' });
       }
+
+      // Hash new password
+      const new_password_hash = await bcrypt.hash(validated.new_password, 10);
 
       await pool.query(
         'UPDATE users SET password_hash = $1, updated_at = $2 WHERE user_id = $3',
-        [validated.new_password, now, req.user.user_id]
+        [new_password_hash, now, req.user.user_id]
       );
     } else if (req.userType === 'agent' && req.agent) {
       const result = await pool.query(
-        'SELECT agent_id FROM agents WHERE agent_id = $1 AND password_hash = $2',
-        [req.agent.agent_id, validated.current_password]
+        'SELECT agent_id, password_hash FROM agents WHERE agent_id = $1',
+        [req.agent.agent_id]
       );
 
       if (result.rows.length === 0) {
+        return res.status(401).json({ success: false, message: 'Agent not found' });
+      }
+
+      // Verify current password
+      const passwordValid = await bcrypt.compare(validated.current_password, result.rows[0].password_hash);
+      if (!passwordValid) {
         return res.status(401).json({ success: false, message: 'Current password is incorrect' });
       }
 
+      // Hash new password
+      const new_password_hash = await bcrypt.hash(validated.new_password, 10);
+
       await pool.query(
         'UPDATE agents SET password_hash = $1, updated_at = $2 WHERE agent_id = $3',
-        [validated.new_password, now, req.agent.agent_id]
+        [new_password_hash, now, req.agent.agent_id]
       );
     }
 
     res.json({ success: true, message: 'Password changed successfully' });
   } catch (error) {
+    console.error('Password change error:', error);
     res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
