@@ -656,7 +656,14 @@ app.get('/api/properties', async (req, res) => {
     const values = [];
     let paramCount = 1;
 
-    conditions.push(`p.status IN ('active', 'pending')`);
+    // Handle status filter - use provided status array or default to active/pending
+    if (validated.status && validated.status.length > 0) {
+      conditions.push(`p.status = ANY($${paramCount})`);
+      values.push(validated.status);
+      paramCount++;
+    } else {
+      conditions.push(`p.status IN ('active', 'pending')`);
+    }
 
     if (validated.query) {
       conditions.push(`(LOWER(p.title) LIKE $${paramCount} OR LOWER(p.description) LIKE $${paramCount})`);
@@ -745,10 +752,21 @@ app.get('/api/properties', async (req, res) => {
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     let orderBy = 'p.created_at DESC';
-    if (validated.sort_by === 'price' && validated.sort_order === 'asc') orderBy = 'p.price ASC';
-    else if (validated.sort_by === 'price' && validated.sort_order === 'desc') orderBy = 'p.price DESC';
-    else if (validated.sort_by === 'square_footage' && validated.sort_order === 'desc') orderBy = 'p.square_footage DESC';
-    else if (validated.sort_by === 'view_count') orderBy = 'p.view_count DESC';
+    if (validated.sort_by === 'price') {
+      orderBy = `p.price ${validated.sort_order.toUpperCase()}`;
+    } else if (validated.sort_by === 'square_footage') {
+      orderBy = `p.square_footage ${validated.sort_order.toUpperCase()}`;
+    } else if (validated.sort_by === 'view_count') {
+      orderBy = `p.view_count ${validated.sort_order.toUpperCase()}`;
+    } else if (validated.sort_by === 'bedrooms') {
+      orderBy = `p.bedrooms ${validated.sort_order.toUpperCase()}`;
+    } else if (validated.sort_by === 'updated_at') {
+      orderBy = `p.updated_at ${validated.sort_order.toUpperCase()}`;
+    } else if (validated.sort_by === 'featured_order') {
+      orderBy = `p.featured_order ${validated.sort_order.toUpperCase()} NULLS LAST, p.created_at DESC`;
+    } else if (validated.sort_by === 'created_at') {
+      orderBy = `p.created_at ${validated.sort_order.toUpperCase()}`;
+    }
 
     const countResult = await pool.query(
       `SELECT COUNT(*) as total FROM properties p ${whereClause}`,
