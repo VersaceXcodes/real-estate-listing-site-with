@@ -40,7 +40,7 @@ const UV_AgentLogin: React.FC = () => {
     if (errorMessage) {
       clearAuthError();
     }
-  }, [email, password]);
+  }, [email, password, errorMessage, clearAuthError]);
   
   const validateForm = (): boolean => {
     const errors: typeof validationErrors = {};

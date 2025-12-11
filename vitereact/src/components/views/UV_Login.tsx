@@ -79,7 +79,7 @@ const UV_Login: React.FC = () => {
       // Success: Store will update auth state and this component will redirect via useEffect
       // Navigation happens automatically via useEffect watching is_authenticated
       
-    } catch (error: any) {
+    } catch {
       // Error is set in global state, will be displayed via global_error_message
       setLoginFormData(prev => ({ 
         ...prev, 

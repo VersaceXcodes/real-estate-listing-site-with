@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '@/store/main';
 import { Eye, EyeOff, X } from 'lucide-react';
@@ -56,57 +56,6 @@ const GV_AuthModal: React.FC<AuthModalProps> = ({
 
   // ========== EFFECTS ==========
   
-  // Reset form when mode changes
-  useEffect(() => {
-    clearAllForms();
-    clearAuthError();
-  }, [authMode]);
-
-  // Update initial mode when prop changes
-  useEffect(() => {
-    setAuthMode(initialMode);
-  }, [initialMode]);
-
-  // Close modal on escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when modal open
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
-  // Calculate password strength in real-time
-  useEffect(() => {
-    if (registerPassword.length === 0) {
-      setPasswordStrength('weak');
-      return;
-    }
-
-    let strength = 0;
-    
-    if (registerPassword.length >= 8) strength++;
-    if (registerPassword.length >= 12) strength++;
-    if (/[a-z]/.test(registerPassword) && /[A-Z]/.test(registerPassword)) strength++;
-    if (/\d/.test(registerPassword)) strength++;
-    if (/[^a-zA-Z\d]/.test(registerPassword)) strength++;
-    
-    if (strength <= 2) setPasswordStrength('weak');
-    else if (strength <= 4) setPasswordStrength('medium');
-    else setPasswordStrength('strong');
-  }, [registerPassword]);
-
   // ========== HELPER FUNCTIONS ==========
   
   const clearAllForms = () => {
@@ -135,11 +84,62 @@ const GV_AuthModal: React.FC<AuthModalProps> = ({
     setShowRegisterPassword(false);
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     clearAllForms();
     clearAuthError();
     onClose();
-  };
+  }, [clearAuthError, onClose]);
+
+  // Reset form when mode changes
+  useEffect(() => {
+    clearAllForms();
+    clearAuthError();
+  }, [authMode, clearAuthError]);
+
+  // Update initial mode when prop changes
+  useEffect(() => {
+    setAuthMode(initialMode);
+  }, [initialMode]);
+
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, handleClose]);
+
+  // Calculate password strength in real-time
+  useEffect(() => {
+    if (registerPassword.length === 0) {
+      setPasswordStrength('weak');
+      return;
+    }
+
+    let strength = 0;
+    
+    if (registerPassword.length >= 8) strength++;
+    if (registerPassword.length >= 12) strength++;
+    if (/[a-z]/.test(registerPassword) && /[A-Z]/.test(registerPassword)) strength++;
+    if (/\d/.test(registerPassword)) strength++;
+    if (/[^a-zA-Z\d]/.test(registerPassword)) strength++;
+    
+    if (strength <= 2) setPasswordStrength('weak');
+    else if (strength <= 4) setPasswordStrength('medium');
+    else setPasswordStrength('strong');
+  }, [registerPassword]);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

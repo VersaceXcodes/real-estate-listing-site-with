@@ -179,7 +179,7 @@ const UV_UserInquiries: React.FC = () => {
   });
   
   // ========== DERIVED STATE ==========
-  const inquiries = inquiriesData?.data || [];
+  const inquiries = useMemo(() => inquiriesData?.data || [], [inquiriesData?.data]);
   const totalCount = inquiriesData?.pagination.total || 0;
   
   // Group inquiries by status for filtering

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
@@ -395,7 +395,7 @@ const UV_PropertyDetail: React.FC = () => {
         sessionStorage.setItem(viewKey, 'true');
       }
     }
-  }, [property_id]);
+  }, [property_id, trackViewMutation]);
   
   // Handle 404
   useEffect(() => {
@@ -407,6 +407,16 @@ const UV_PropertyDetail: React.FC = () => {
       });
     }
   }, [propertyError, navigate]);
+  
+  // ========== HANDLERS ==========
+  
+  const goToNextImage = useCallback(() => {
+    setCurrentImageIndex((prev) => (prev + 1) % photos.length);
+  }, [photos.length]);
+  
+  const goToPreviousImage = useCallback(() => {
+    setCurrentImageIndex((prev) => (prev - 1 + photos.length) % photos.length);
+  }, [photos.length]);
   
   // Keyboard navigation for gallery
   useEffect(() => {
@@ -420,17 +430,7 @@ const UV_PropertyDetail: React.FC = () => {
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxOpen, currentImageIndex, photos.length]);
-  
-  // ========== HANDLERS ==========
-  
-  const goToNextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % photos.length);
-  };
-  
-  const goToPreviousImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
-  };
+  }, [lightboxOpen, currentImageIndex, photos.length, goToNextImage, goToPreviousImage]);
   
   const handleFavoriteToggle = async () => {
     if (!isAuthenticated) {
@@ -448,7 +448,7 @@ const UV_PropertyDetail: React.FC = () => {
         await addFavorite(property_id);
         showToast('Property saved to favorites', 'success');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to update favorites', 'error');
     }
   };

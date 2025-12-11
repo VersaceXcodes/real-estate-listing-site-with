@@ -743,7 +743,7 @@ export const useAppStore = create<AppState>()(
             }));
           }
           
-        } catch (error) {
+        } catch {
           // Token invalid, clear auth state
           set(() => ({
             authentication_state: {

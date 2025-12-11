@@ -137,7 +137,7 @@ const UV_UserAccount: React.FC = () => {
         location: userProfile.location || ''
       });
     }
-  }, [userProfile]);
+  }, [userProfile, isEditingProfile]);
 
   // ========== REACT QUERY: LOAD NOTIFICATION PREFERENCES ==========
   const { data: notificationPreferences, isLoading: isLoadingPreferences } = useQuery<NotificationPreferences>({

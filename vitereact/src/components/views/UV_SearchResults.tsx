@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -195,7 +195,7 @@ const UV_SearchResults: React.FC = () => {
   };
   
   // Update filter and URL
-  const updateFilter = (filterName: keyof SearchFilters, value: any) => {
+  const updateFilter = useCallback((filterName: keyof SearchFilters, value: any) => {
     const updated = { ...activeFilters, [filterName]: value, offset: 0 };
     setActiveFilters(updated);
     
@@ -221,7 +221,7 @@ const UV_SearchResults: React.FC = () => {
     if (sortString !== 'created_at_desc') newParams.set('sort', sortString);
     
     setSearchParams(newParams);
-  };
+  }, [activeFilters, setSearchParams]);
   
   // Clear all filters
   const clearAllFilters = () => {
@@ -250,13 +250,13 @@ const UV_SearchResults: React.FC = () => {
   };
   
   // Remove individual filter
-  const removeFilter = (filterName: keyof SearchFilters) => {
+  const removeFilter = useCallback((filterName: keyof SearchFilters) => {
     if (Array.isArray(activeFilters[filterName])) {
       updateFilter(filterName, []);
     } else {
       updateFilter(filterName, null);
     }
-  };
+  }, [activeFilters, updateFilter]);
   
   // Toggle favorite
   const handleToggleFavorite = async (propertyId: string, event: React.MouseEvent) => {
@@ -275,7 +275,7 @@ const UV_SearchResults: React.FC = () => {
       } else {
         await addFavorite(propertyId);
       }
-    } catch (error) {
+    } catch {
       // Error handled in store
     }
   };
@@ -357,7 +357,7 @@ const UV_SearchResults: React.FC = () => {
     });
     
     return pills;
-  }, [activeFilters]);
+  }, [activeFilters, removeFilter, updateFilter]);
   
   // Pagination
   const goToPage = (page: number) => {

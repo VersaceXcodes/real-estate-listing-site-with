@@ -7,12 +7,8 @@ interface TermsSection {
   content: string;
 }
 
-const UV_Terms: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [tocOpen, setTocOpen] = useState(false);
-
-  // Static terms sections content
-  const termsSections: TermsSection[] = [
+// Static terms sections content - defined outside component to prevent recreating on every render
+const termsSections: TermsSection[] = [
     {
       id: 'introduction',
       title: 'Introduction',
@@ -361,6 +357,10 @@ const UV_Terms: React.FC = () => {
     }
   ];
 
+const UV_Terms: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [tocOpen, setTocOpen] = useState(false);
+
   // Scroll to section on mount if hash present
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -401,7 +401,7 @@ const UV_Terms: React.FC = () => {
     });
 
     return () => observer.disconnect();
-  }, [termsSections]);
+  }, []);
 
   const navigateToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);

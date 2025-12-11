@@ -381,7 +381,7 @@ const UV_AgentListings: React.FC = () => {
       
       refetch();
       
-    } catch (error) {
+    } catch {
       showToast('Some actions failed. Please try again.', 'error');
       setBulkActionState(prev => ({ ...prev, processing: false }));
     }

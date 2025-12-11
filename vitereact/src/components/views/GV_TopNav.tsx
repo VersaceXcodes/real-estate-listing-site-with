@@ -49,7 +49,7 @@ const GV_TopNav: React.FC = () => {
     if (mobileNavOpen) {
       toggleMobileNav();
     }
-  }, [currentPath]);
+  }, [currentPath, mobileNavOpen, toggleMobileNav]);
   
   // ========== HANDLERS ==========
   
