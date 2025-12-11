@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765427042497,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_AuthModal",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/GV_AuthModal.tsx",
+      "type": "text",
+      "size": 33094,
+      "dependencies": false
+    }
+  ]
+}

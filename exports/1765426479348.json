@@ -1,0 +1,15 @@
+{
+  "timestamp": 1765426479348,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/backend/package.json",
+      "type": "text",
+      "size": 1454,
+      "dependencies": true
+    }
+  ]
+}

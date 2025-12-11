@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765427069248,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_AgentInquiries",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/UV_AgentInquiries.tsx",
+      "type": "text",
+      "size": 47255,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765427049789,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_MobileNav",
+      "version": "1765426873945"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/GV_MobileNav.tsx",
+      "type": "text",
+      "size": 21304,
+      "dependencies": false
+    }
+  ]
+}

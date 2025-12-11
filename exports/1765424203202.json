@@ -1,0 +1,15 @@
+{
+  "timestamp": 1765424203202,
+  "operation": {
+    "id": "backend:specifications:asyncapi"
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/backend/asyncapi.yaml",
+      "type": "text",
+      "size": 39698,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "timestamp": 1765426373544,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/package.json",
+      "type": "text",
+      "size": 2949,
+      "dependencies": true
+    }
+  ]
+}

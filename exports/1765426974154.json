@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765426974154,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_Footer",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/GV_Footer.tsx",
+      "type": "text",
+      "size": 8131,
+      "dependencies": false
+    }
+  ]
+}

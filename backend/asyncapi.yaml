@@ -1,0 +1,1451 @@
+asyncapi: 2.0.0
+info:
+  title: PropConnect Realtime API
+  version: 1.0.0
+  description: >
+    Realtime WebSocket API for PropConnect real estate platform.
+
+    Handles live notifications, property updates, inquiry management, and
+    dashboard analytics.
+  contact:
+    name: PropConnect API Support
+    email: support@propconnect.com
+servers:
+  development:
+    url: ws://localhost:3000/ws
+    protocol: ws
+    description: Development WebSocket server
+channels:
+  property/created:
+    description: Notifies when a new property is listed (for saved search alerts)
+    subscribe:
+      summary: Receive new property listing notifications
+      message:
+        $ref: "#/components/messages/PropertyCreated"
+  property/updated:
+    description: Notifies when property details are updated
+    subscribe:
+      summary: Receive property update notifications
+      message:
+        $ref: "#/components/messages/PropertyUpdated"
+  property/price_changed:
+    description: Notifies when a property price changes
+    subscribe:
+      summary: Receive property price change notifications
+      message:
+        $ref: "#/components/messages/PropertyPriceChanged"
+  property/status_changed:
+    description: Notifies when property status changes (active, pending, sold, rented)
+    subscribe:
+      summary: Receive property status change notifications
+      message:
+        $ref: "#/components/messages/PropertyStatusChanged"
+  property/view_count_updated:
+    description: Real-time property view count updates
+    subscribe:
+      summary: Receive property view count updates
+      message:
+        $ref: "#/components/messages/PropertyViewCountUpdated"
+  property/favorite_count_updated:
+    description: Real-time property favorite count updates
+    subscribe:
+      summary: Receive property favorite count updates
+      message:
+        $ref: "#/components/messages/PropertyFavoriteCountUpdated"
+  property/inquiry_count_updated:
+    description: Real-time property inquiry count updates
+    subscribe:
+      summary: Receive property inquiry count updates
+      message:
+        $ref: "#/components/messages/PropertyInquiryCountUpdated"
+  property/deleted:
+    description: Notifies when a property is deleted or removed
+    subscribe:
+      summary: Receive property deletion notifications
+      message:
+        $ref: "#/components/messages/PropertyDeleted"
+  inquiry/created:
+    description: Notifies agent when new inquiry is received
+    subscribe:
+      summary: Receive new inquiry notifications
+      message:
+        $ref: "#/components/messages/InquiryCreated"
+  inquiry/replied:
+    description: Notifies user when agent replies to inquiry
+    subscribe:
+      summary: Receive inquiry reply notifications
+      message:
+        $ref: "#/components/messages/InquiryReplied"
+  inquiry/status_changed:
+    description: Notifies when inquiry status changes
+    subscribe:
+      summary: Receive inquiry status change notifications
+      message:
+        $ref: "#/components/messages/InquiryStatusChanged"
+  inquiry/read:
+    description: Notifies when agent reads an inquiry
+    subscribe:
+      summary: Receive inquiry read notifications
+      message:
+        $ref: "#/components/messages/InquiryRead"
+  favorite/added:
+    description: Notifies when user saves/favorites a property
+    subscribe:
+      summary: Receive favorite added notifications
+      message:
+        $ref: "#/components/messages/FavoriteAdded"
+  favorite/removed:
+    description: Notifies when user removes a favorite property
+    subscribe:
+      summary: Receive favorite removed notifications
+      message:
+        $ref: "#/components/messages/FavoriteRemoved"
+  agent/dashboard_stats_updated:
+    description: Real-time agent dashboard statistics updates
+    subscribe:
+      summary: Receive dashboard stats updates
+      message:
+        $ref: "#/components/messages/AgentDashboardStatsUpdated"
+  agent/listing_analytics_updated:
+    description: Real-time listing analytics updates for agents
+    subscribe:
+      summary: Receive listing analytics updates
+      message:
+        $ref: "#/components/messages/AgentListingAnalyticsUpdated"
+  agent/approval_status_changed:
+    description: Notifies agent when approval status changes
+    subscribe:
+      summary: Receive agent approval status notifications
+      message:
+        $ref: "#/components/messages/AgentApprovalStatusChanged"
+  agent/account_status_changed:
+    description: Notifies agent when account status changes (suspended, activated)
+    subscribe:
+      summary: Receive agent account status notifications
+      message:
+        $ref: "#/components/messages/AgentAccountStatusChanged"
+  user/saved_search_match:
+    description: Notifies user when new property matches saved search criteria
+    subscribe:
+      summary: Receive saved search match notifications
+      message:
+        $ref: "#/components/messages/UserSavedSearchMatch"
+  user/notification_preferences_updated:
+    description: Notifies when user notification preferences change
+    subscribe:
+      summary: Receive notification preference updates
+      message:
+        $ref: "#/components/messages/UserNotificationPreferencesUpdated"
+  admin/agent_registration_pending:
+    description: Notifies admin of new agent registration pending approval
+    subscribe:
+      summary: Receive pending agent registration notifications
+      message:
+        $ref: "#/components/messages/AdminAgentRegistrationPending"
+  admin/property_report_created:
+    description: Notifies admin when property is reported
+    subscribe:
+      summary: Receive property report notifications
+      message:
+        $ref: "#/components/messages/AdminPropertyReportCreated"
+  admin/property_report_resolved:
+    description: Notifies when property report is resolved
+    subscribe:
+      summary: Receive property report resolution notifications
+      message:
+        $ref: "#/components/messages/AdminPropertyReportResolved"
+  session/expired:
+    description: Notifies user/agent when session is about to expire or has expired
+    subscribe:
+      summary: Receive session expiration notifications
+      message:
+        $ref: "#/components/messages/SessionExpired"
+  open_house/created:
+    description: Notifies when open house is scheduled for a property
+    subscribe:
+      summary: Receive open house creation notifications
+      message:
+        $ref: "#/components/messages/OpenHouseCreated"
+  open_house/updated:
+    description: Notifies when open house details are updated
+    subscribe:
+      summary: Receive open house update notifications
+      message:
+        $ref: "#/components/messages/OpenHouseUpdated"
+  open_house/rsvp_received:
+    description: Notifies agent when someone RSVPs to open house
+    subscribe:
+      summary: Receive open house RSVP notifications
+      message:
+        $ref: "#/components/messages/OpenHouseRsvpReceived"
+  notification/general:
+    description: General notification channel for system-wide messages
+    subscribe:
+      summary: Receive general notifications
+      message:
+        $ref: "#/components/messages/GeneralNotification"
+components:
+  messages:
+    PropertyCreated:
+      name: PropertyCreated
+      title: Property Created Event
+      summary: Sent when a new property listing is created
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyCreatedPayload"
+    PropertyUpdated:
+      name: PropertyUpdated
+      title: Property Updated Event
+      summary: Sent when property details are updated
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyUpdatedPayload"
+    PropertyPriceChanged:
+      name: PropertyPriceChanged
+      title: Property Price Changed Event
+      summary: Sent when property price is modified
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyPriceChangedPayload"
+    PropertyStatusChanged:
+      name: PropertyStatusChanged
+      title: Property Status Changed Event
+      summary: Sent when property status changes
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyStatusChangedPayload"
+    PropertyViewCountUpdated:
+      name: PropertyViewCountUpdated
+      title: Property View Count Updated Event
+      summary: Sent when property view count changes
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyViewCountUpdatedPayload"
+    PropertyFavoriteCountUpdated:
+      name: PropertyFavoriteCountUpdated
+      title: Property Favorite Count Updated Event
+      summary: Sent when property favorite count changes
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyFavoriteCountUpdatedPayload"
+    PropertyInquiryCountUpdated:
+      name: PropertyInquiryCountUpdated
+      title: Property Inquiry Count Updated Event
+      summary: Sent when property inquiry count changes
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyInquiryCountUpdatedPayload"
+    PropertyDeleted:
+      name: PropertyDeleted
+      title: Property Deleted Event
+      summary: Sent when property is deleted or removed
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PropertyDeletedPayload"
+    InquiryCreated:
+      name: InquiryCreated
+      title: Inquiry Created Event
+      summary: Sent when new inquiry is submitted
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/InquiryCreatedPayload"
+    InquiryReplied:
+      name: InquiryReplied
+      title: Inquiry Replied Event
+      summary: Sent when agent replies to inquiry
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/InquiryRepliedPayload"
+    InquiryStatusChanged:
+      name: InquiryStatusChanged
+      title: Inquiry Status Changed Event
+      summary: Sent when inquiry status is updated
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/InquiryStatusChangedPayload"
+    InquiryRead:
+      name: InquiryRead
+      title: Inquiry Read Event
+      summary: Sent when agent reads an inquiry
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/InquiryReadPayload"
+    FavoriteAdded:
+      name: FavoriteAdded
+      title: Favorite Added Event
+      summary: Sent when user saves a property to favorites
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/FavoriteAddedPayload"
+    FavoriteRemoved:
+      name: FavoriteRemoved
+      title: Favorite Removed Event
+      summary: Sent when user removes property from favorites
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/FavoriteRemovedPayload"
+    AgentDashboardStatsUpdated:
+      name: AgentDashboardStatsUpdated
+      title: Agent Dashboard Stats Updated Event
+      summary: Sent when agent dashboard statistics change
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentDashboardStatsUpdatedPayload"
+    AgentListingAnalyticsUpdated:
+      name: AgentListingAnalyticsUpdated
+      title: Agent Listing Analytics Updated Event
+      summary: Sent when individual listing analytics update
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentListingAnalyticsUpdatedPayload"
+    AgentApprovalStatusChanged:
+      name: AgentApprovalStatusChanged
+      title: Agent Approval Status Changed Event
+      summary: Sent when agent approval status changes
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentApprovalStatusChangedPayload"
+    AgentAccountStatusChanged:
+      name: AgentAccountStatusChanged
+      title: Agent Account Status Changed Event
+      summary: Sent when agent account status changes
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AgentAccountStatusChangedPayload"
+    UserSavedSearchMatch:
+      name: UserSavedSearchMatch
+      title: User Saved Search Match Event
+      summary: Sent when new property matches user's saved search
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserSavedSearchMatchPayload"
+    UserNotificationPreferencesUpdated:
+      name: UserNotificationPreferencesUpdated
+      title: User Notification Preferences Updated Event
+      summary: Sent when user updates notification preferences
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/UserNotificationPreferencesUpdatedPayload"
+    AdminAgentRegistrationPending:
+      name: AdminAgentRegistrationPending
+      title: Admin Agent Registration Pending Event
+      summary: Sent when new agent registration requires approval
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AdminAgentRegistrationPendingPayload"
+    AdminPropertyReportCreated:
+      name: AdminPropertyReportCreated
+      title: Admin Property Report Created Event
+      summary: Sent when property is reported by user
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AdminPropertyReportCreatedPayload"
+    AdminPropertyReportResolved:
+      name: AdminPropertyReportResolved
+      title: Admin Property Report Resolved Event
+      summary: Sent when property report is resolved
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/AdminPropertyReportResolvedPayload"
+    SessionExpired:
+      name: SessionExpired
+      title: Session Expired Event
+      summary: Sent when user/agent session is expiring or has expired
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/SessionExpiredPayload"
+    OpenHouseCreated:
+      name: OpenHouseCreated
+      title: Open House Created Event
+      summary: Sent when open house is scheduled
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/OpenHouseCreatedPayload"
+    OpenHouseUpdated:
+      name: OpenHouseUpdated
+      title: Open House Updated Event
+      summary: Sent when open house details are updated
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/OpenHouseUpdatedPayload"
+    OpenHouseRsvpReceived:
+      name: OpenHouseRsvpReceived
+      title: Open House RSVP Received Event
+      summary: Sent when someone RSVPs to open house
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/OpenHouseRsvpReceivedPayload"
+    GeneralNotification:
+      name: GeneralNotification
+      title: General Notification Event
+      summary: General purpose notification for system messages
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/GeneralNotificationPayload"
+  schemas:
+    PropertyCreatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property
+      properties:
+        event_id:
+          type: string
+          description: Unique event identifier
+        event_type:
+          type: string
+          enum:
+            - property_created
+        timestamp:
+          type: string
+          format: date-time
+          description: Event timestamp in ISO 8601 format
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+        matched_saved_searches:
+          type: array
+          items:
+            type: string
+          description: Array of saved_search_id that match this property
+        recipient_user_ids:
+          type: array
+          items:
+            type: string
+          description: Array of user_ids to notify
+    PropertyUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - updated_fields
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_updated
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        updated_fields:
+          type: object
+          description: Object containing updated field names and new values
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+    PropertyPriceChangedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - old_price
+        - new_price
+        - price_change_amount
+        - price_change_percentage
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_price_changed
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        old_price:
+          type: number
+        new_price:
+          type: number
+        price_change_amount:
+          type: number
+        price_change_percentage:
+          type: number
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+        recipient_user_ids:
+          type: array
+          items:
+            type: string
+          description: Array of user_ids who have this property saved
+    PropertyStatusChangedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - old_status
+        - new_status
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_status_changed
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        old_status:
+          type: string
+          enum:
+            - draft
+            - active
+            - pending
+            - sold
+            - rented
+            - inactive
+        new_status:
+          type: string
+          enum:
+            - draft
+            - active
+            - pending
+            - sold
+            - rented
+            - inactive
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+        recipient_user_ids:
+          type: array
+          items:
+            type: string
+          description: Array of user_ids who have this property saved
+    PropertyViewCountUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - view_count
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_view_count_updated
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        view_count:
+          type: integer
+        agent_id:
+          type: string
+          description: Agent who owns this property
+    PropertyFavoriteCountUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - favorite_count
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_favorite_count_updated
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        favorite_count:
+          type: integer
+        agent_id:
+          type: string
+    PropertyInquiryCountUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - inquiry_count
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_inquiry_count_updated
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        inquiry_count:
+          type: integer
+        agent_id:
+          type: string
+    PropertyDeletedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - property_deleted
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        property_address:
+          type: string
+        reason:
+          type: string
+          description: Reason for deletion
+        recipient_user_ids:
+          type: array
+          items:
+            type: string
+          description: Users who had this property saved
+    InquiryCreatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - inquiry_id
+        - property_id
+        - agent_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - inquiry_created
+        timestamp:
+          type: string
+          format: date-time
+        inquiry_id:
+          type: string
+        property_id:
+          type: string
+        agent_id:
+          type: string
+        user_id:
+          type: string
+          nullable: true
+        inquirer_name:
+          type: string
+        inquirer_email:
+          type: string
+        inquirer_phone:
+          type: string
+          nullable: true
+        message:
+          type: string
+        viewing_requested:
+          type: boolean
+        preferred_viewing_date:
+          type: string
+          nullable: true
+        preferred_viewing_time:
+          type: string
+          nullable: true
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+    InquiryRepliedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - inquiry_id
+        - reply_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - inquiry_replied
+        timestamp:
+          type: string
+          format: date-time
+        inquiry_id:
+          type: string
+        reply_id:
+          type: string
+        sender_type:
+          type: string
+          enum:
+            - agent
+            - user
+        sender_id:
+          type: string
+        sender_name:
+          type: string
+        message:
+          type: string
+        property_id:
+          type: string
+        recipient_user_id:
+          type: string
+          nullable: true
+        recipient_agent_id:
+          type: string
+          nullable: true
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+    InquiryStatusChangedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - inquiry_id
+        - old_status
+        - new_status
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - inquiry_status_changed
+        timestamp:
+          type: string
+          format: date-time
+        inquiry_id:
+          type: string
+        old_status:
+          type: string
+          enum:
+            - new
+            - responded
+            - scheduled
+            - completed
+            - closed
+        new_status:
+          type: string
+          enum:
+            - new
+            - responded
+            - scheduled
+            - completed
+            - closed
+        property_id:
+          type: string
+        recipient_user_id:
+          type: string
+          nullable: true
+        recipient_agent_id:
+          type: string
+          nullable: true
+    InquiryReadPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - inquiry_id
+        - agent_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - inquiry_read
+        timestamp:
+          type: string
+          format: date-time
+        inquiry_id:
+          type: string
+        agent_id:
+          type: string
+        property_id:
+          type: string
+    FavoriteAddedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - favorite_id
+        - user_id
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - favorite_added
+        timestamp:
+          type: string
+          format: date-time
+        favorite_id:
+          type: string
+        user_id:
+          type: string
+        property_id:
+          type: string
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+        agent_id:
+          type: string
+          description: Agent who owns the property
+    FavoriteRemovedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - user_id
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - favorite_removed
+        timestamp:
+          type: string
+          format: date-time
+        user_id:
+          type: string
+        property_id:
+          type: string
+        agent_id:
+          type: string
+    AgentDashboardStatsUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - agent_id
+        - stats
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - agent_dashboard_stats_updated
+        timestamp:
+          type: string
+          format: date-time
+        agent_id:
+          type: string
+        stats:
+          type: object
+          required:
+            - total_active_listings
+            - total_inquiries
+            - unread_inquiry_count
+          properties:
+            total_active_listings:
+              type: integer
+            total_inquiries:
+              type: integer
+            unread_inquiry_count:
+              type: integer
+            total_views_this_month:
+              type: integer
+            total_favorites_this_month:
+              type: integer
+            properties_sold_this_month:
+              type: integer
+            properties_rented_this_month:
+              type: integer
+    AgentListingAnalyticsUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - property_id
+        - agent_id
+        - analytics
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - agent_listing_analytics_updated
+        timestamp:
+          type: string
+          format: date-time
+        property_id:
+          type: string
+        agent_id:
+          type: string
+        analytics:
+          type: object
+          properties:
+            total_views:
+              type: integer
+            total_inquiries:
+              type: integer
+            total_favorites:
+              type: integer
+            views_today:
+              type: integer
+            inquiries_today:
+              type: integer
+            average_time_on_page:
+              type: number
+              nullable: true
+    AgentApprovalStatusChangedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - agent_id
+        - old_status
+        - new_status
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - agent_approval_status_changed
+        timestamp:
+          type: string
+          format: date-time
+        agent_id:
+          type: string
+        old_status:
+          type: string
+          enum:
+            - pending
+            - approved
+            - rejected
+        new_status:
+          type: string
+          enum:
+            - pending
+            - approved
+            - rejected
+        rejection_reason:
+          type: string
+          nullable: true
+        message:
+          type: string
+          description: Message to display to agent
+    AgentAccountStatusChangedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - agent_id
+        - old_status
+        - new_status
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - agent_account_status_changed
+        timestamp:
+          type: string
+          format: date-time
+        agent_id:
+          type: string
+        old_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        new_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        reason:
+          type: string
+          nullable: true
+        message:
+          type: string
+    UserSavedSearchMatchPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - user_id
+        - saved_search_id
+        - matching_properties
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - user_saved_search_match
+        timestamp:
+          type: string
+          format: date-time
+        user_id:
+          type: string
+        saved_search_id:
+          type: string
+        saved_search_name:
+          type: string
+        matching_properties:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertySummary"
+        match_count:
+          type: integer
+    UserNotificationPreferencesUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - user_id
+        - preferences
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - user_notification_preferences_updated
+        timestamp:
+          type: string
+          format: date-time
+        user_id:
+          type: string
+        preferences:
+          type: object
+          properties:
+            saved_property_price_change:
+              type: boolean
+            saved_property_status_change:
+              type: boolean
+            new_matching_properties:
+              type: boolean
+            agent_reply_received:
+              type: boolean
+            platform_updates:
+              type: boolean
+    AdminAgentRegistrationPendingPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - agent_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - admin_agent_registration_pending
+        timestamp:
+          type: string
+          format: date-time
+        agent_id:
+          type: string
+        agent_email:
+          type: string
+        agent_full_name:
+          type: string
+        license_number:
+          type: string
+        license_state:
+          type: string
+        agency_name:
+          type: string
+        registration_date:
+          type: string
+          format: date-time
+    AdminPropertyReportCreatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - report_id
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - admin_property_report_created
+        timestamp:
+          type: string
+          format: date-time
+        report_id:
+          type: string
+        property_id:
+          type: string
+        reporter_user_id:
+          type: string
+          nullable: true
+        reporter_email:
+          type: string
+          nullable: true
+        reason:
+          type: string
+        details:
+          type: string
+          nullable: true
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+    AdminPropertyReportResolvedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - report_id
+        - property_id
+        - resolution_status
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - admin_property_report_resolved
+        timestamp:
+          type: string
+          format: date-time
+        report_id:
+          type: string
+        property_id:
+          type: string
+        resolution_status:
+          type: string
+          enum:
+            - resolved
+            - dismissed
+        admin_notes:
+          type: string
+          nullable: true
+        resolved_by_admin_id:
+          type: string
+    SessionExpiredPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - session_id
+        - user_type
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - session_expired
+        timestamp:
+          type: string
+          format: date-time
+        session_id:
+          type: string
+        user_type:
+          type: string
+          enum:
+            - user
+            - agent
+            - admin
+        user_id:
+          type: string
+          nullable: true
+        agent_id:
+          type: string
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+        warning_minutes_before:
+          type: integer
+          description: Minutes before expiration (for warning notifications)
+    OpenHouseCreatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - open_house_id
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - open_house_created
+        timestamp:
+          type: string
+          format: date-time
+        open_house_id:
+          type: string
+        property_id:
+          type: string
+        scheduled_date:
+          type: string
+        start_time:
+          type: string
+        end_time:
+          type: string
+        description:
+          type: string
+          nullable: true
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+        recipient_user_ids:
+          type: array
+          items:
+            type: string
+          description: Users who have this property saved
+    OpenHouseUpdatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - open_house_id
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - open_house_updated
+        timestamp:
+          type: string
+          format: date-time
+        open_house_id:
+          type: string
+        property_id:
+          type: string
+        updated_fields:
+          type: object
+          description: Changed fields with new values
+        scheduled_date:
+          type: string
+        start_time:
+          type: string
+        end_time:
+          type: string
+        is_active:
+          type: boolean
+        recipient_user_ids:
+          type: array
+          items:
+            type: string
+        recipient_rsvp_ids:
+          type: array
+          items:
+            type: string
+          description: Users who RSVPed to this open house
+    OpenHouseRsvpReceivedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - rsvp_id
+        - open_house_id
+        - property_id
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - open_house_rsvp_received
+        timestamp:
+          type: string
+          format: date-time
+        rsvp_id:
+          type: string
+        open_house_id:
+          type: string
+        property_id:
+          type: string
+        user_id:
+          type: string
+          nullable: true
+        guest_name:
+          type: string
+        guest_email:
+          type: string
+        guest_phone:
+          type: string
+          nullable: true
+        number_of_guests:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+        agent_id:
+          type: string
+        property:
+          $ref: "#/components/schemas/PropertySummary"
+    GeneralNotificationPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - notification_type
+        - message
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+          enum:
+            - general_notification
+        timestamp:
+          type: string
+          format: date-time
+        notification_type:
+          type: string
+          enum:
+            - info
+            - success
+            - warning
+            - error
+        message:
+          type: string
+        title:
+          type: string
+          nullable: true
+        action_url:
+          type: string
+          nullable: true
+        action_label:
+          type: string
+          nullable: true
+        recipient_user_id:
+          type: string
+          nullable: true
+        recipient_agent_id:
+          type: string
+          nullable: true
+        auto_dismiss_seconds:
+          type: integer
+          nullable: true
+    PropertySummary:
+      type: object
+      required:
+        - property_id
+        - title
+        - price
+        - address_city
+        - address_state
+      properties:
+        property_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        listing_type:
+          type: string
+          enum:
+            - sale
+            - rent
+        property_type:
+          type: string
+          enum:
+            - house
+            - condo
+            - townhouse
+            - apartment
+            - land
+            - commercial
+        status:
+          type: string
+          enum:
+            - draft
+            - active
+            - pending
+            - sold
+            - rented
+            - inactive
+        price:
+          type: number
+        currency:
+          type: string
+        address_street:
+          type: string
+        address_unit:
+          type: string
+          nullable: true
+        address_city:
+          type: string
+        address_state:
+          type: string
+        address_zip:
+          type: string
+        neighborhood:
+          type: string
+          nullable: true
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: number
+        square_footage:
+          type: integer
+        primary_photo_url:
+          type: string
+          nullable: true
+        agent_id:
+          type: string
+        agent_name:
+          type: string
+          nullable: true
+        view_count:
+          type: integer
+        inquiry_count:
+          type: integer
+        favorite_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

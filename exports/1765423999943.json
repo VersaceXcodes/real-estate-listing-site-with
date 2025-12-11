@@ -1,0 +1,15 @@
+{
+  "timestamp": 1765423999943,
+  "operation": {
+    "id": "db:schemas:zod"
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/backend/schema.ts",
+      "type": "text",
+      "size": 50190,
+      "dependencies": false
+    }
+  ]
+}

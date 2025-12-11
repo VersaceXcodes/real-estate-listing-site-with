@@ -1,0 +1,3668 @@
+openapi: 3.0.0
+info:
+  title: PropConnect API
+  version: 1.0.0
+  description: Comprehensive real estate listing platform API with agent management system
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    property_id:
+      name: property_id
+      in: path
+      required: true
+      schema:
+        type: string
+    agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+    user_id:
+      name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    inquiry_id:
+      name: inquiry_id
+      in: path
+      required: true
+      schema:
+        type: string
+    favorite_id:
+      name: favorite_id
+      in: path
+      required: true
+      schema:
+        type: string
+    photo_id:
+      name: photo_id
+      in: path
+      required: true
+      schema:
+        type: string
+    saved_search_id:
+      name: saved_search_id
+      in: path
+      required: true
+      schema:
+        type: string
+    report_id:
+      name: report_id
+      in: path
+      required: true
+      schema:
+        type: string
+    open_house_id:
+      name: open_house_id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+        full_name:
+          type: string
+        phone_number:
+          type: string
+          nullable: true
+        email_verified:
+          type: boolean
+        profile_photo_url:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Agent:
+      type: object
+      properties:
+        agent_id:
+          type: string
+        email:
+          type: string
+        full_name:
+          type: string
+        phone_number:
+          type: string
+        license_number:
+          type: string
+        license_state:
+          type: string
+        agency_name:
+          type: string
+        office_address_street:
+          type: string
+        office_address_city:
+          type: string
+        office_address_state:
+          type: string
+        office_address_zip:
+          type: string
+        years_experience:
+          type: string
+        profile_photo_url:
+          type: string
+          nullable: true
+        professional_title:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        specializations:
+          type: array
+          items:
+            type: string
+          nullable: true
+        service_areas:
+          type: array
+          items:
+            type: string
+          nullable: true
+        languages_spoken:
+          type: array
+          items:
+            type: string
+          nullable: true
+        social_media_links:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+        certifications:
+          type: array
+          items:
+            type: string
+          nullable: true
+        email_signature:
+          type: string
+          nullable: true
+        approved:
+          type: boolean
+        approval_status:
+          type: string
+          enum:
+            - pending
+            - approved
+            - rejected
+        account_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Property:
+      type: object
+      properties:
+        property_id:
+          type: string
+        agent_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        listing_type:
+          type: string
+          enum:
+            - sale
+            - rent
+        property_type:
+          type: string
+          enum:
+            - house
+            - condo
+            - townhouse
+            - apartment
+            - land
+            - commercial
+        status:
+          type: string
+          enum:
+            - draft
+            - active
+            - pending
+            - sold
+            - rented
+            - inactive
+        price:
+          type: number
+        currency:
+          type: string
+        price_per_sqft:
+          type: number
+          nullable: true
+        rent_frequency:
+          type: string
+          enum:
+            - monthly
+            - weekly
+            - daily
+          nullable: true
+        address_street:
+          type: string
+        address_unit:
+          type: string
+          nullable: true
+        address_city:
+          type: string
+        address_state:
+          type: string
+        address_zip:
+          type: string
+        address_country:
+          type: string
+        latitude:
+          type: string
+          nullable: true
+        longitude:
+          type: string
+          nullable: true
+        neighborhood:
+          type: string
+          nullable: true
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: number
+        square_footage:
+          type: integer
+        lot_size:
+          type: number
+          nullable: true
+        lot_size_unit:
+          type: string
+          enum:
+            - sqft
+            - acres
+          nullable: true
+        year_built:
+          type: integer
+          nullable: true
+        property_style:
+          type: string
+          nullable: true
+        floors:
+          type: integer
+          nullable: true
+        parking_spaces:
+          type: integer
+          nullable: true
+        parking_type:
+          type: string
+          nullable: true
+        hoa_fee:
+          type: number
+          nullable: true
+        hoa_frequency:
+          type: string
+          enum:
+            - monthly
+            - quarterly
+            - annually
+          nullable: true
+        property_tax:
+          type: number
+          nullable: true
+        mls_number:
+          type: string
+          nullable: true
+        interior_features:
+          type: array
+          items:
+            type: string
+          nullable: true
+        exterior_features:
+          type: array
+          items:
+            type: string
+          nullable: true
+        appliances_included:
+          type: array
+          items:
+            type: string
+          nullable: true
+        utilities_systems:
+          type: array
+          items:
+            type: string
+          nullable: true
+        security_features:
+          type: array
+          items:
+            type: string
+          nullable: true
+        community_amenities:
+          type: array
+          items:
+            type: string
+          nullable: true
+        amenities:
+          type: array
+          items:
+            type: string
+          nullable: true
+        additional_features:
+          type: array
+          items:
+            type: string
+          nullable: true
+        highlights:
+          type: array
+          items:
+            type: string
+          nullable: true
+        furnished:
+          type: boolean
+        pet_friendly:
+          type: boolean
+        new_construction:
+          type: boolean
+        recently_renovated:
+          type: boolean
+        virtual_tour_available:
+          type: boolean
+        open_house_scheduled:
+          type: boolean
+        price_reduced:
+          type: boolean
+        youtube_video_url:
+          type: string
+          nullable: true
+        virtual_tour_url:
+          type: string
+          nullable: true
+        view_count:
+          type: integer
+        inquiry_count:
+          type: integer
+        favorite_count:
+          type: integer
+        is_featured:
+          type: boolean
+        featured_until:
+          type: string
+          nullable: true
+        featured_order:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        published_at:
+          type: string
+          nullable: true
+        days_on_market:
+          type: integer
+          nullable: true
+    PropertyPhoto:
+      type: object
+      properties:
+        photo_id:
+          type: string
+        property_id:
+          type: string
+        image_url:
+          type: string
+        thumbnail_url:
+          type: string
+          nullable: true
+        display_order:
+          type: integer
+        is_primary:
+          type: boolean
+        caption:
+          type: string
+          nullable: true
+        file_size:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+    Inquiry:
+      type: object
+      properties:
+        inquiry_id:
+          type: string
+        property_id:
+          type: string
+        agent_id:
+          type: string
+        user_id:
+          type: string
+          nullable: true
+        inquirer_name:
+          type: string
+        inquirer_email:
+          type: string
+        inquirer_phone:
+          type: string
+          nullable: true
+        message:
+          type: string
+        viewing_requested:
+          type: boolean
+        preferred_viewing_date:
+          type: string
+          nullable: true
+        preferred_viewing_time:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - new
+            - responded
+            - scheduled
+            - completed
+            - closed
+        agent_read:
+          type: boolean
+        agent_read_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    InquiryReply:
+      type: object
+      properties:
+        reply_id:
+          type: string
+        inquiry_id:
+          type: string
+        sender_type:
+          type: string
+          enum:
+            - agent
+            - user
+        sender_id:
+          type: string
+        message:
+          type: string
+        include_signature:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    Favorite:
+      type: object
+      properties:
+        favorite_id:
+          type: string
+        user_id:
+          type: string
+        property_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    PropertyReport:
+      type: object
+      properties:
+        report_id:
+          type: string
+        property_id:
+          type: string
+        reporter_user_id:
+          type: string
+          nullable: true
+        reporter_email:
+          type: string
+          nullable: true
+        reason:
+          type: string
+        details:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - pending
+            - resolved
+            - dismissed
+        admin_notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+    UserNotificationPreferences:
+      type: object
+      properties:
+        preference_id:
+          type: string
+        user_id:
+          type: string
+        saved_property_price_change:
+          type: boolean
+        saved_property_status_change:
+          type: boolean
+        new_matching_properties:
+          type: boolean
+        agent_reply_received:
+          type: boolean
+        platform_updates:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    AgentNotificationPreferences:
+      type: object
+      properties:
+        preference_id:
+          type: string
+        agent_id:
+          type: string
+        new_inquiry_received:
+          type: boolean
+        inquirer_replied:
+          type: boolean
+        property_view_milestones:
+          type: boolean
+        monthly_report:
+          type: boolean
+        platform_updates:
+          type: boolean
+        notification_frequency:
+          type: string
+          enum:
+            - instant
+            - daily
+            - weekly
+        browser_notifications_enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    SavedSearch:
+      type: object
+      properties:
+        saved_search_id:
+          type: string
+        user_id:
+          type: string
+        search_name:
+          type: string
+        location:
+          type: string
+          nullable: true
+        min_price:
+          type: number
+          nullable: true
+        max_price:
+          type: number
+          nullable: true
+        listing_type:
+          type: string
+          nullable: true
+        property_type:
+          type: array
+          items:
+            type: string
+          nullable: true
+        bedrooms:
+          type: integer
+          nullable: true
+        bathrooms:
+          type: number
+          nullable: true
+        min_sqft:
+          type: integer
+          nullable: true
+        max_sqft:
+          type: integer
+          nullable: true
+        amenities:
+          type: array
+          items:
+            type: string
+          nullable: true
+        features:
+          type: array
+          items:
+            type: string
+          nullable: true
+        alert_frequency:
+          type: string
+          enum:
+            - instant
+            - daily
+            - weekly
+            - never
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PropertyPriceHistory:
+      type: object
+      properties:
+        history_id:
+          type: string
+        property_id:
+          type: string
+        old_price:
+          type: number
+        new_price:
+          type: number
+        price_change_amount:
+          type: number
+        price_change_percentage:
+          type: number
+        changed_at:
+          type: string
+    PropertyStatusHistory:
+      type: object
+      properties:
+        history_id:
+          type: string
+        property_id:
+          type: string
+        old_status:
+          type: string
+        new_status:
+          type: string
+        changed_by_agent_id:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        changed_at:
+          type: string
+    OpenHouse:
+      type: object
+      properties:
+        open_house_id:
+          type: string
+        property_id:
+          type: string
+        scheduled_date:
+          type: string
+        start_time:
+          type: string
+        end_time:
+          type: string
+        description:
+          type: string
+          nullable: true
+        rsvp_count:
+          type: integer
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    OpenHouseRsvp:
+      type: object
+      properties:
+        rsvp_id:
+          type: string
+        open_house_id:
+          type: string
+        user_id:
+          type: string
+          nullable: true
+        guest_name:
+          type: string
+        guest_email:
+          type: string
+        guest_phone:
+          type: string
+          nullable: true
+        number_of_guests:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - confirmed
+            - cancelled
+            - attended
+            - no_show
+        created_at:
+          type: string
+    DashboardStats:
+      type: object
+      properties:
+        total_active_listings:
+          type: integer
+        total_views_this_month:
+          type: integer
+        total_inquiries_this_month:
+          type: integer
+        total_favorites:
+          type: integer
+        properties_sold_this_month:
+          type: integer
+        properties_rented_this_month:
+          type: integer
+        unread_inquiry_count:
+          type: integer
+    PropertyAnalytics:
+      type: object
+      properties:
+        property_id:
+          type: string
+        total_views:
+          type: integer
+        total_inquiries:
+          type: integer
+        total_favorites:
+          type: integer
+        inquiry_rate:
+          type: number
+        views_by_date:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              views:
+                type: integer
+    AgentAnalytics:
+      type: object
+      properties:
+        agent_id:
+          type: string
+        date_range:
+          type: object
+          properties:
+            from:
+              type: string
+            to:
+              type: string
+        total_views:
+          type: integer
+        total_inquiries:
+          type: integer
+        total_favorites:
+          type: integer
+        properties_sold:
+          type: integer
+        properties_rented:
+          type: integer
+        top_performing_listings:
+          type: array
+          items:
+            type: object
+            properties:
+              property_id:
+                type: string
+              title:
+                type: string
+              views:
+                type: integer
+              inquiries:
+                type: integer
+    PaginatedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        pagination:
+          type: object
+          properties:
+            total:
+              type: integer
+            limit:
+              type: integer
+            offset:
+              type: integer
+            has_more:
+              type: boolean
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string
+          nullable: true
+        user:
+          $ref: "#/components/schemas/User"
+          nullable: true
+        agent:
+          $ref: "#/components/schemas/Agent"
+          nullable: true
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+          nullable: true
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+paths:
+  /auth/register:
+    post:
+      summary: Register new property seeker user
+      operationId: registerUser
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - full_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                full_name:
+                  type: string
+                phone_number:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid input or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/login:
+    post:
+      summary: Login property seeker user
+      operationId: loginUser
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/agent/register:
+    post:
+      summary: Register new real estate agent
+      operationId: registerAgent
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - full_name
+                - phone_number
+                - license_number
+                - license_state
+                - agency_name
+                - office_address_street
+                - office_address_city
+                - office_address_state
+                - office_address_zip
+                - years_experience
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                full_name:
+                  type: string
+                phone_number:
+                  type: string
+                license_number:
+                  type: string
+                license_state:
+                  type: string
+                agency_name:
+                  type: string
+                office_address_street:
+                  type: string
+                office_address_city:
+                  type: string
+                office_address_state:
+                  type: string
+                office_address_zip:
+                  type: string
+                years_experience:
+                  type: string
+                license_document_url:
+                  type: string
+                  nullable: true
+                profile_photo_url:
+                  type: string
+                  nullable: true
+                professional_title:
+                  type: string
+                  nullable: true
+                bio:
+                  type: string
+                  nullable: true
+                specializations:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                service_areas:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                languages_spoken:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Agent registration submitted for approval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/agent/login:
+    post:
+      summary: Login real estate agent
+      operationId: loginAgent
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Agent login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials or account not approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/verify-email:
+    post:
+      summary: Verify email address with token
+      operationId: verifyEmail
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/forgot-password:
+    post:
+      summary: Request password reset email
+      operationId: forgotPassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Password reset email sent if account exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /auth/reset-password:
+    post:
+      summary: Reset password with token
+      operationId: resetPassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - new_password
+              properties:
+                token:
+                  type: string
+                new_password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/change-password:
+    post:
+      summary: Change password for authenticated user
+      operationId: changePassword
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_password
+                - new_password
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Invalid current password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users/me:
+    get:
+      summary: Get current user profile
+      operationId: getCurrentUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update current user profile
+      operationId: updateCurrentUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                phone_number:
+                  type: string
+                  nullable: true
+                profile_photo_url:
+                  type: string
+                  nullable: true
+                location:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: User profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete current user account
+      operationId: deleteCurrentUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User account deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /users/notification-preferences:
+    get:
+      summary: Get user notification preferences
+      operationId: getUserNotificationPreferences
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Notification preferences retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserNotificationPreferences"
+    put:
+      summary: Update user notification preferences
+      operationId: updateUserNotificationPreferences
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                saved_property_price_change:
+                  type: boolean
+                saved_property_status_change:
+                  type: boolean
+                new_matching_properties:
+                  type: boolean
+                agent_reply_received:
+                  type: boolean
+                platform_updates:
+                  type: boolean
+      responses:
+        "200":
+          description: Preferences updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserNotificationPreferences"
+  /agents/me:
+    get:
+      summary: Get current agent profile
+      operationId: getCurrentAgent
+      tags:
+        - Agents
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Agent profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update current agent profile
+      operationId: updateCurrentAgent
+      tags:
+        - Agents
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                phone_number:
+                  type: string
+                profile_photo_url:
+                  type: string
+                  nullable: true
+                professional_title:
+                  type: string
+                  nullable: true
+                bio:
+                  type: string
+                  nullable: true
+                specializations:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                service_areas:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                languages_spoken:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                social_media_links:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                certifications:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                email_signature:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Agent profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+  /agents/{agent_id}:
+    get:
+      summary: Get public agent profile by ID
+      operationId: getAgentById
+      tags:
+        - Agents
+      parameters:
+        - $ref: "#/components/parameters/agent_id"
+      responses:
+        "200":
+          description: Agent profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+        "404":
+          description: Agent not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /agents:
+    get:
+      summary: Search and browse agents
+      operationId: searchAgents
+      tags:
+        - Agents
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: approval_status
+          in: query
+          schema:
+            type: string
+            enum:
+              - pending
+              - approved
+              - rejected
+        - name: license_state
+          in: query
+          schema:
+            type: string
+        - name: specializations
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: service_areas
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - created_at
+              - full_name
+              - agency_name
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: Agents list retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Agent"
+  /agents/notification-preferences:
+    get:
+      summary: Get agent notification preferences
+      operationId: getAgentNotificationPreferences
+      tags:
+        - Agents
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Notification preferences retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentNotificationPreferences"
+    put:
+      summary: Update agent notification preferences
+      operationId: updateAgentNotificationPreferences
+      tags:
+        - Agents
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_inquiry_received:
+                  type: boolean
+                inquirer_replied:
+                  type: boolean
+                property_view_milestones:
+                  type: boolean
+                monthly_report:
+                  type: boolean
+                platform_updates:
+                  type: boolean
+                notification_frequency:
+                  type: string
+                  enum:
+                    - instant
+                    - daily
+                    - weekly
+                browser_notifications_enabled:
+                  type: boolean
+      responses:
+        "200":
+          description: Preferences updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentNotificationPreferences"
+  /agents/dashboard/stats:
+    get:
+      summary: Get agent dashboard statistics
+      operationId: getAgentDashboardStats
+      tags:
+        - Agent Dashboard
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Dashboard statistics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+  /agents/listings:
+    get:
+      summary: Get agent's own property listings
+      operationId: getAgentListings
+      tags:
+        - Agent Dashboard
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - draft
+                - active
+                - pending
+                - sold
+                - rented
+                - inactive
+        - name: property_type
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - house
+                - condo
+                - townhouse
+                - apartment
+                - land
+                - commercial
+        - name: listing_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - sale
+              - rent
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - created_at
+              - price
+              - view_count
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Agent listings retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Property"
+  /agents/analytics:
+    get:
+      summary: Get agent performance analytics
+      operationId: getAgentAnalytics
+      tags:
+        - Agent Dashboard
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Agent analytics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentAnalytics"
+  /properties:
+    get:
+      summary: Search and browse properties with comprehensive filters
+      operationId: searchProperties
+      tags:
+        - Properties
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: listing_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - sale
+              - rent
+        - name: property_type
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - house
+                - condo
+                - townhouse
+                - apartment
+                - land
+                - commercial
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - active
+                - pending
+        - name: min_price
+          in: query
+          schema:
+            type: number
+        - name: max_price
+          in: query
+          schema:
+            type: number
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: zip
+          in: query
+          schema:
+            type: string
+        - name: neighborhood
+          in: query
+          schema:
+            type: string
+        - name: bedrooms
+          in: query
+          schema:
+            type: integer
+        - name: min_bedrooms
+          in: query
+          schema:
+            type: integer
+        - name: max_bedrooms
+          in: query
+          schema:
+            type: integer
+        - name: bathrooms
+          in: query
+          schema:
+            type: number
+        - name: min_bathrooms
+          in: query
+          schema:
+            type: number
+        - name: max_bathrooms
+          in: query
+          schema:
+            type: number
+        - name: min_sqft
+          in: query
+          schema:
+            type: integer
+        - name: max_sqft
+          in: query
+          schema:
+            type: integer
+        - name: amenities
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: features
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: furnished
+          in: query
+          schema:
+            type: boolean
+        - name: pet_friendly
+          in: query
+          schema:
+            type: boolean
+        - name: new_construction
+          in: query
+          schema:
+            type: boolean
+        - name: recently_renovated
+          in: query
+          schema:
+            type: boolean
+        - name: virtual_tour_available
+          in: query
+          schema:
+            type: boolean
+        - name: is_featured
+          in: query
+          schema:
+            type: boolean
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+              - price_asc
+              - price_desc
+              - newest
+              - oldest
+              - sqft_largest
+              - sqft_smallest
+            default: newest
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum:
+              - grid
+              - list
+              - map
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Properties list retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Property"
+    post:
+      summary: Create new property listing (Agent only)
+      operationId: createProperty
+      tags:
+        - Properties
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - listing_type
+                - property_type
+                - price
+                - address_street
+                - address_city
+                - address_state
+                - address_zip
+                - bedrooms
+                - bathrooms
+                - square_footage
+              properties:
+                title:
+                  type: string
+                  minLength: 10
+                  maxLength: 200
+                description:
+                  type: string
+                  minLength: 50
+                  maxLength: 5000
+                listing_type:
+                  type: string
+                  enum:
+                    - sale
+                    - rent
+                property_type:
+                  type: string
+                  enum:
+                    - house
+                    - condo
+                    - townhouse
+                    - apartment
+                    - land
+                    - commercial
+                status:
+                  type: string
+                  enum:
+                    - draft
+                    - active
+                    - pending
+                    - sold
+                    - rented
+                    - inactive
+                  default: draft
+                price:
+                  type: number
+                currency:
+                  type: string
+                  default: USD
+                rent_frequency:
+                  type: string
+                  enum:
+                    - monthly
+                    - weekly
+                    - daily
+                  nullable: true
+                address_street:
+                  type: string
+                address_unit:
+                  type: string
+                  nullable: true
+                address_city:
+                  type: string
+                address_state:
+                  type: string
+                address_zip:
+                  type: string
+                address_country:
+                  type: string
+                  default: United States
+                latitude:
+                  type: string
+                  nullable: true
+                longitude:
+                  type: string
+                  nullable: true
+                neighborhood:
+                  type: string
+                  nullable: true
+                bedrooms:
+                  type: integer
+                bathrooms:
+                  type: number
+                square_footage:
+                  type: integer
+                lot_size:
+                  type: number
+                  nullable: true
+                lot_size_unit:
+                  type: string
+                  enum:
+                    - sqft
+                    - acres
+                  nullable: true
+                year_built:
+                  type: integer
+                  nullable: true
+                property_style:
+                  type: string
+                  nullable: true
+                floors:
+                  type: integer
+                  nullable: true
+                parking_spaces:
+                  type: integer
+                  nullable: true
+                parking_type:
+                  type: string
+                  nullable: true
+                hoa_fee:
+                  type: number
+                  nullable: true
+                hoa_frequency:
+                  type: string
+                  enum:
+                    - monthly
+                    - quarterly
+                    - annually
+                  nullable: true
+                property_tax:
+                  type: number
+                  nullable: true
+                mls_number:
+                  type: string
+                  nullable: true
+                interior_features:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                exterior_features:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                appliances_included:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                utilities_systems:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                security_features:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                community_amenities:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                amenities:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                additional_features:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                highlights:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                furnished:
+                  type: boolean
+                  default: false
+                pet_friendly:
+                  type: boolean
+                  default: false
+                new_construction:
+                  type: boolean
+                  default: false
+                recently_renovated:
+                  type: boolean
+                  default: false
+                virtual_tour_available:
+                  type: boolean
+                  default: false
+                open_house_scheduled:
+                  type: boolean
+                  default: false
+                price_reduced:
+                  type: boolean
+                  default: false
+                youtube_video_url:
+                  type: string
+                  nullable: true
+                virtual_tour_url:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Property created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - Agent only
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /properties/{property_id}:
+    get:
+      summary: Get property details by ID
+      operationId: getPropertyById
+      tags:
+        - Properties
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Property details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "404":
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update property listing (Agent owner only)
+      operationId: updateProperty
+      tags:
+        - Properties
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                listing_type:
+                  type: string
+                  enum:
+                    - sale
+                    - rent
+                property_type:
+                  type: string
+                  enum:
+                    - house
+                    - condo
+                    - townhouse
+                    - apartment
+                    - land
+                    - commercial
+                status:
+                  type: string
+                  enum:
+                    - draft
+                    - active
+                    - pending
+                    - sold
+                    - rented
+                    - inactive
+                price:
+                  type: number
+                address_street:
+                  type: string
+                address_city:
+                  type: string
+                address_state:
+                  type: string
+                bedrooms:
+                  type: integer
+                bathrooms:
+                  type: number
+                square_footage:
+                  type: integer
+                amenities:
+                  type: array
+                  items:
+                    type: string
+                highlights:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Property updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "403":
+          description: Forbidden - Not property owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete property listing (Agent owner only)
+      operationId: deleteProperty
+      tags:
+        - Properties
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Property deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "403":
+          description: Forbidden - Not property owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /properties/{property_id}/duplicate:
+    post:
+      summary: Duplicate existing property listing (Agent owner only)
+      operationId: duplicateProperty
+      tags:
+        - Properties
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "201":
+          description: Property duplicated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "403":
+          description: Forbidden - Not property owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /properties/{property_id}/similar:
+    get:
+      summary: Get similar properties based on location, price, and type
+      operationId: getSimilarProperties
+      tags:
+        - Properties
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 6
+      responses:
+        "200":
+          description: Similar properties retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Property"
+  /properties/{property_id}/view:
+    post:
+      summary: Track property view for analytics
+      operationId: trackPropertyView
+      tags:
+        - Properties
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                  nullable: true
+                referrer:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: View tracked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /properties/{property_id}/analytics:
+    get:
+      summary: Get property analytics (Agent owner only)
+      operationId: getPropertyAnalytics
+      tags:
+        - Properties
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Property analytics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyAnalytics"
+  /properties/{property_id}/price-history:
+    get:
+      summary: Get property price change history
+      operationId: getPropertyPriceHistory
+      tags:
+        - Properties
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Price history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PropertyPriceHistory"
+  /properties/{property_id}/status-history:
+    get:
+      summary: Get property status change history (Agent owner only)
+      operationId: getPropertyStatusHistory
+      tags:
+        - Properties
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Status history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PropertyStatusHistory"
+  /properties/{property_id}/photos:
+    get:
+      summary: Get all photos for a property
+      operationId: getPropertyPhotos
+      tags:
+        - Property Photos
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Photos retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PropertyPhoto"
+    post:
+      summary: Add photo to property listing (Agent owner only)
+      operationId: addPropertyPhoto
+      tags:
+        - Property Photos
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - image_url
+                - display_order
+              properties:
+                image_url:
+                  type: string
+                thumbnail_url:
+                  type: string
+                  nullable: true
+                display_order:
+                  type: integer
+                is_primary:
+                  type: boolean
+                  default: false
+                caption:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Photo added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyPhoto"
+  /properties/{property_id}/photos/{photo_id}:
+    put:
+      summary: Update property photo details (Agent owner only)
+      operationId: updatePropertyPhoto
+      tags:
+        - Property Photos
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+        - $ref: "#/components/parameters/photo_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                display_order:
+                  type: integer
+                is_primary:
+                  type: boolean
+                caption:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Photo updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyPhoto"
+    delete:
+      summary: Delete property photo (Agent owner only)
+      operationId: deletePropertyPhoto
+      tags:
+        - Property Photos
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+        - $ref: "#/components/parameters/photo_id"
+      responses:
+        "200":
+          description: Photo deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /properties/{property_id}/photos/reorder:
+    put:
+      summary: Reorder property photos (Agent owner only)
+      operationId: reorderPropertyPhotos
+      tags:
+        - Property Photos
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - photo_order
+              properties:
+                photo_order:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      photo_id:
+                        type: string
+                      display_order:
+                        type: integer
+      responses:
+        "200":
+          description: Photos reordered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /inquiries:
+    post:
+      summary: Submit property inquiry
+      operationId: createInquiry
+      tags:
+        - Inquiries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+                - agent_id
+                - inquirer_name
+                - inquirer_email
+                - message
+              properties:
+                property_id:
+                  type: string
+                agent_id:
+                  type: string
+                user_id:
+                  type: string
+                  nullable: true
+                inquirer_name:
+                  type: string
+                inquirer_email:
+                  type: string
+                  format: email
+                inquirer_phone:
+                  type: string
+                  nullable: true
+                message:
+                  type: string
+                  minLength: 10
+                  maxLength: 2000
+                viewing_requested:
+                  type: boolean
+                  default: false
+                preferred_viewing_date:
+                  type: string
+                  nullable: true
+                preferred_viewing_time:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Inquiry submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inquiry"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /inquiries/my-inquiries:
+    get:
+      summary: Get user's sent inquiries
+      operationId: getUserInquiries
+      tags:
+        - Inquiries
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - new
+                - responded
+                - scheduled
+                - completed
+                - closed
+        - name: property_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: User inquiries retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Inquiry"
+  /inquiries/agent/my-inquiries:
+    get:
+      summary: Get agent's received inquiries
+      operationId: getAgentInquiries
+      tags:
+        - Inquiries
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - new
+                - responded
+                - scheduled
+                - completed
+                - closed
+        - name: agent_read
+          in: query
+          schema:
+            type: boolean
+        - name: property_id
+          in: query
+          schema:
+            type: string
+        - name: viewing_requested
+          in: query
+          schema:
+            type: boolean
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - created_at
+              - updated_at
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: Agent inquiries retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Inquiry"
+  /inquiries/{inquiry_id}:
+    get:
+      summary: Get inquiry details with full conversation
+      operationId: getInquiryById
+      tags:
+        - Inquiries
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/inquiry_id"
+      responses:
+        "200":
+          description: Inquiry details retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inquiry:
+                    $ref: "#/components/schemas/Inquiry"
+                  replies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/InquiryReply"
+  /inquiries/{inquiry_id}/status:
+    put:
+      summary: Update inquiry status (Agent only)
+      operationId: updateInquiryStatus
+      tags:
+        - Inquiries
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/inquiry_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - new
+                    - responded
+                    - scheduled
+                    - completed
+                    - closed
+      responses:
+        "200":
+          description: Inquiry status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inquiry"
+  /inquiries/{inquiry_id}/mark-read:
+    put:
+      summary: Mark inquiry as read (Agent only)
+      operationId: markInquiryAsRead
+      tags:
+        - Inquiries
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/inquiry_id"
+      responses:
+        "200":
+          description: Inquiry marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /inquiries/{inquiry_id}/reply:
+    post:
+      summary: Reply to inquiry
+      operationId: replyToInquiry
+      tags:
+        - Inquiries
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/inquiry_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 5000
+                include_signature:
+                  type: boolean
+                  default: true
+      responses:
+        "201":
+          description: Reply sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InquiryReply"
+  /favorites:
+    get:
+      summary: Get user's saved/favorite properties
+      operationId: getUserFavorites
+      tags:
+        - Favorites
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - created_at
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Favorites retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Favorite"
+    post:
+      summary: Add property to favorites
+      operationId: addFavorite
+      tags:
+        - Favorites
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+              properties:
+                property_id:
+                  type: string
+      responses:
+        "201":
+          description: Property added to favorites
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Favorite"
+        "409":
+          description: Property already in favorites
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /favorites/{favorite_id}:
+    delete:
+      summary: Remove property from favorites
+      operationId: removeFavorite
+      tags:
+        - Favorites
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/favorite_id"
+      responses:
+        "200":
+          description: Favorite removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /favorites/check/{property_id}:
+    get:
+      summary: Check if property is favorited by current user
+      operationId: checkFavoriteStatus
+      tags:
+        - Favorites
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Favorite status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  is_favorited:
+                    type: boolean
+                  favorite_id:
+                    type: string
+                    nullable: true
+  /property-reports:
+    post:
+      summary: Report a property listing
+      operationId: reportProperty
+      tags:
+        - Property Reports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+                - reason
+              properties:
+                property_id:
+                  type: string
+                reporter_user_id:
+                  type: string
+                  nullable: true
+                reporter_email:
+                  type: string
+                  format: email
+                  nullable: true
+                reason:
+                  type: string
+                  enum:
+                    - Incorrect Information
+                    - Suspicious Listing
+                    - Inappropriate Content
+                    - Spam
+                    - Other
+                details:
+                  type: string
+                  maxLength: 2000
+                  nullable: true
+      responses:
+        "201":
+          description: Report submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyReport"
+  /saved-searches:
+    get:
+      summary: Get user's saved searches
+      operationId: getUserSavedSearches
+      tags:
+        - Saved Searches
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Saved searches retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SavedSearch"
+    post:
+      summary: Create saved search with alert preferences
+      operationId: createSavedSearch
+      tags:
+        - Saved Searches
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - search_name
+              properties:
+                search_name:
+                  type: string
+                location:
+                  type: string
+                  nullable: true
+                min_price:
+                  type: number
+                  nullable: true
+                max_price:
+                  type: number
+                  nullable: true
+                listing_type:
+                  type: string
+                  enum:
+                    - sale
+                    - rent
+                  nullable: true
+                property_type:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                bedrooms:
+                  type: integer
+                  nullable: true
+                bathrooms:
+                  type: number
+                  nullable: true
+                min_sqft:
+                  type: integer
+                  nullable: true
+                max_sqft:
+                  type: integer
+                  nullable: true
+                amenities:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                features:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                alert_frequency:
+                  type: string
+                  enum:
+                    - instant
+                    - daily
+                    - weekly
+                    - never
+                  default: daily
+                is_active:
+                  type: boolean
+                  default: true
+      responses:
+        "201":
+          description: Saved search created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+  /saved-searches/{saved_search_id}:
+    put:
+      summary: Update saved search
+      operationId: updateSavedSearch
+      tags:
+        - Saved Searches
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/saved_search_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_name:
+                  type: string
+                alert_frequency:
+                  type: string
+                  enum:
+                    - instant
+                    - daily
+                    - weekly
+                    - never
+                is_active:
+                  type: boolean
+      responses:
+        "200":
+          description: Saved search updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+    delete:
+      summary: Delete saved search
+      operationId: deleteSavedSearch
+      tags:
+        - Saved Searches
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/saved_search_id"
+      responses:
+        "200":
+          description: Saved search deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /properties/{property_id}/open-houses:
+    get:
+      summary: Get open houses for a property
+      operationId: getPropertyOpenHouses
+      tags:
+        - Open Houses
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Open houses retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OpenHouse"
+    post:
+      summary: Schedule open house for property (Agent owner only)
+      operationId: createOpenHouse
+      tags:
+        - Open Houses
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - scheduled_date
+                - start_time
+                - end_time
+              properties:
+                scheduled_date:
+                  type: string
+                start_time:
+                  type: string
+                end_time:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                is_active:
+                  type: boolean
+                  default: true
+      responses:
+        "201":
+          description: Open house created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenHouse"
+  /open-houses/{open_house_id}:
+    put:
+      summary: Update open house details (Agent owner only)
+      operationId: updateOpenHouse
+      tags:
+        - Open Houses
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/open_house_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scheduled_date:
+                  type: string
+                start_time:
+                  type: string
+                end_time:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                is_active:
+                  type: boolean
+      responses:
+        "200":
+          description: Open house updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenHouse"
+    delete:
+      summary: Cancel/delete open house (Agent owner only)
+      operationId: deleteOpenHouse
+      tags:
+        - Open Houses
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/open_house_id"
+      responses:
+        "200":
+          description: Open house deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /open-houses/{open_house_id}/rsvp:
+    post:
+      summary: RSVP to open house
+      operationId: rsvpOpenHouse
+      tags:
+        - Open Houses
+      parameters:
+        - $ref: "#/components/parameters/open_house_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - guest_name
+                - guest_email
+              properties:
+                user_id:
+                  type: string
+                  nullable: true
+                guest_name:
+                  type: string
+                guest_email:
+                  type: string
+                  format: email
+                guest_phone:
+                  type: string
+                  nullable: true
+                number_of_guests:
+                  type: integer
+                  default: 1
+                notes:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: RSVP submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenHouseRsvp"
+  /admin/agents/pending:
+    get:
+      summary: Get pending agent approvals (Admin only)
+      operationId: getPendingAgents
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Pending agents retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Agent"
+  /admin/agents/{agent_id}/approve:
+    put:
+      summary: Approve agent application (Admin only)
+      operationId: approveAgent
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/agent_id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                welcome_message:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Agent approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+  /admin/agents/{agent_id}/reject:
+    put:
+      summary: Reject agent application (Admin only)
+      operationId: rejectAgent
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/agent_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rejection_reason
+              properties:
+                rejection_reason:
+                  type: string
+                message:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Agent rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+  /admin/agents:
+    get:
+      summary: Get all agents with filters (Admin only)
+      operationId: getAllAgents
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: approval_status
+          in: query
+          schema:
+            type: string
+            enum:
+              - pending
+              - approved
+              - rejected
+        - name: account_status
+          in: query
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - suspended
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: All agents retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Agent"
+  /admin/agents/{agent_id}/status:
+    put:
+      summary: Update agent account status (Admin only)
+      operationId: updateAgentStatus
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/agent_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_status
+              properties:
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - suspended
+      responses:
+        "200":
+          description: Agent status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+  /admin/property-reports:
+    get:
+      summary: Get all property reports (Admin only)
+      operationId: getPropertyReports
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - pending
+                - resolved
+                - dismissed
+        - name: reason
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Property reports retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PropertyReport"
+  /admin/property-reports/{report_id}:
+    put:
+      summary: Resolve or dismiss property report (Admin only)
+      operationId: updatePropertyReport
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/report_id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - resolved
+                    - dismissed
+                admin_notes:
+                  type: string
+                  nullable: true
+                action_taken:
+                  type: string
+                  enum:
+                    - remove_listing
+                    - warn_agent
+                    - no_action
+      responses:
+        "200":
+          description: Report updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyReport"
+  /admin/featured-listings:
+    get:
+      summary: Get all featured listings (Admin only)
+      operationId: getFeaturedListings
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Featured listings retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Property"
+    post:
+      summary: Add property to featured listings (Admin only)
+      operationId: addFeaturedListing
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - property_id
+              properties:
+                property_id:
+                  type: string
+                featured_until:
+                  type: string
+                  nullable: true
+                featured_order:
+                  type: integer
+                  nullable: true
+      responses:
+        "200":
+          description: Property featured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+  /admin/featured-listings/{property_id}:
+    delete:
+      summary: Remove property from featured listings (Admin only)
+      operationId: removeFeaturedListing
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/property_id"
+      responses:
+        "200":
+          description: Property unfeatured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /admin/featured-listings/reorder:
+    put:
+      summary: Reorder featured listings (Admin only)
+      operationId: reorderFeaturedListings
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - listing_order
+              properties:
+                listing_order:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      property_id:
+                        type: string
+                      featured_order:
+                        type: integer
+      responses:
+        "200":
+          description: Featured listings reordered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"

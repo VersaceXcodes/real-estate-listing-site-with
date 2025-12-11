@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765426869858,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_Landing",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/UV_Landing.tsx",
+      "type": "text",
+      "size": 34775,
+      "dependencies": false
+    }
+  ]
+}

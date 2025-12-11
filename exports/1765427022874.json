@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765427022874,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_Register",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/UV_Register.tsx",
+      "type": "text",
+      "size": 26688,
+      "dependencies": false
+    }
+  ]
+}

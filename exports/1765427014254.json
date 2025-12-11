@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765427014254,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_AdminAgentApprovals",
+      "version": "1765426873371"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/UV_AdminAgentApprovals.tsx",
+      "type": "text",
+      "size": 32763,
+      "dependencies": false
+    }
+  ]
+}

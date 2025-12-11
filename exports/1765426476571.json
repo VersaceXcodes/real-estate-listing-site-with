@@ -1,0 +1,21 @@
+{
+  "timestamp": 1765426476571,
+  "operation": {
+    "id": "backend:tests:main"
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/backend/server.test.ts",
+      "type": "text",
+      "size": 81052,
+      "dependencies": false
+    },
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/backend/jest.config.ts",
+      "type": "text",
+      "size": 865,
+      "dependencies": false
+    }
+  ]
+}

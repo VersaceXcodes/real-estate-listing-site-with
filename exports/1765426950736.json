@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765426950736,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_ForgotPassword",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/components/views/UV_ForgotPassword.tsx",
+      "type": "text",
+      "size": 12454,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1765426370806,
+  "operation": {
+    "id": "webapp:react:store",
+    "refs": {
+      "id": "redux",
+      "version": "latest"
+    }
+  },
+  "projectId": "real-estate-listing-site-with",
+  "files": [
+    {
+      "path": "/mnt/data/real-estate-listing-site-with/vitereact/src/store/main.tsx",
+      "type": "text",
+      "size": 44397,
+      "dependencies": false
+    }
+  ]
+}
