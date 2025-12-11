@@ -12,7 +12,7 @@ import { useAppStore } from '@/store/main';
  * Real API E2E Auth Tests (Register -> Logout -> Sign-In)
  * 
  * These tests use the real backend API at http://localhost:3000
- * No mocking - actual network calls to verify full integration
+ * Actual network calls to verify full integration
  */
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -268,8 +268,6 @@ describe('Auth E2E Flow (Vitest, Real API)', () => {
   }, 30000);
 
   it('validates required fields in registration form', async () => {
-    const user = userEvent.setup();
-
     render(<UV_Register />, { wrapper: Wrapper });
 
     // Try to submit empty form - HTML5 validation will prevent submission

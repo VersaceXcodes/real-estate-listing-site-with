@@ -305,7 +305,7 @@ export const useAppStore = create<AppState>()(
           await get().load_user_notification_preferences();
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || error.message || 'Login failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Login failed';
           
           set((state) => ({
             authentication_state: {
@@ -373,7 +373,7 @@ export const useAppStore = create<AppState>()(
           await get().load_agent_dashboard_stats();
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || error.message || 'Agent login failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Agent login failed';
           
           set((state) => ({
             authentication_state: {
@@ -432,7 +432,7 @@ export const useAppStore = create<AppState>()(
           }));
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || error.message || 'Admin login failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Admin login failed';
           
           set((state) => ({
             authentication_state: {
@@ -494,7 +494,7 @@ export const useAppStore = create<AppState>()(
           await get().load_user_notification_preferences();
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || error.message || 'Registration failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Registration failed';
           
           set((state) => ({
             authentication_state: {
@@ -557,7 +557,7 @@ export const useAppStore = create<AppState>()(
           );
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || error.message || 'Agent registration failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Agent registration failed';
           
           set((state) => ({
             authentication_state: {
@@ -800,7 +800,7 @@ export const useAppStore = create<AppState>()(
           }
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || 'Email verification failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Email verification failed';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -817,7 +817,7 @@ export const useAppStore = create<AppState>()(
           get().show_toast('If an account exists, a password reset email has been sent', 'success');
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || 'Password reset request failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Password reset request failed';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -834,7 +834,7 @@ export const useAppStore = create<AppState>()(
           get().show_toast('Password reset successfully. You can now login.', 'success');
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || 'Password reset failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Password reset failed';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -863,7 +863,7 @@ export const useAppStore = create<AppState>()(
           get().show_toast('Password changed successfully', 'success');
           
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error?.message || 'Password change failed';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Password change failed';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -921,7 +921,7 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
-          const errorMessage = error.response?.data?.error?.message || 'Failed to save property';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Failed to save property';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -968,7 +968,7 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
-          const errorMessage = error.response?.data?.error?.message || 'Failed to remove property';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Failed to remove property';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -1004,7 +1004,8 @@ export const useAppStore = create<AppState>()(
             }
           );
           
-          const property_ids = response.data.data.map((fav: any) => fav.property_id);
+          const favorites = Array.isArray(response.data) ? response.data : (response.data.data || []);
+          const property_ids = favorites.map((fav: any) => fav.property_id);
           
           set(() => ({
             user_favorites: {
@@ -1022,7 +1023,10 @@ export const useAppStore = create<AppState>()(
             },
           }));
           
-          console.error('Failed to load favorites:', error);
+          // Silently handle 404 errors (user has no favorites yet)
+          if (error.response?.status !== 404) {
+            console.error('Failed to load favorites:', error);
+          }
         }
       },
       
@@ -1054,7 +1058,10 @@ export const useAppStore = create<AppState>()(
           set({ user_notification_preferences: response.data });
           
         } catch (error: any) {
-          console.error('Failed to load user notification preferences:', error);
+          // Silently handle 404 errors (user has no notification preferences yet)
+          if (error.response?.status !== 404) {
+            console.error('Failed to load user notification preferences:', error);
+          }
         }
       },
       
@@ -1093,7 +1100,7 @@ export const useAppStore = create<AppState>()(
           // Rollback on error
           set({ user_notification_preferences: previous_prefs });
           
-          const errorMessage = error.response?.data?.error?.message || 'Failed to update preferences';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Failed to update preferences';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }
@@ -1161,7 +1168,7 @@ export const useAppStore = create<AppState>()(
           // Rollback on error
           set({ agent_notification_preferences: previous_prefs });
           
-          const errorMessage = error.response?.data?.error?.message || 'Failed to update preferences';
+          const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Failed to update preferences';
           get().show_toast(errorMessage, 'error');
           throw new Error(errorMessage);
         }

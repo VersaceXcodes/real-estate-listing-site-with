@@ -602,13 +602,33 @@ app.put('/api/users/me', authenticateToken, async (req: AuthenticatedRequest, re
   }
 });
 
+app.get('/api/users/notification-preferences', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.userType !== 'user' || !req.user) {
+      return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM user_notification_preferences WHERE user_id = $1',
+      [req.user.user_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json(createErrorResponse('Notification preferences not found', null, 'NOT_FOUND'));
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
+  }
+});
+
 app.delete('/api/users/me', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (req.userType !== 'user' || !req.user) {
       return res.status(403).json(createErrorResponse('Access denied', null, 'FORBIDDEN'));
     }
 
-    await pool.query('DELETE FROM user_sessions WHERE user_id = $1', [req.user.user_id]);
     await pool.query('DELETE FROM user_notification_preferences WHERE user_id = $1', [req.user.user_id]);
     await pool.query('DELETE FROM saved_searches WHERE user_id = $1', [req.user.user_id]);
     
@@ -882,6 +902,31 @@ app.post('/api/inquiries', async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     res.status(500).json(createErrorResponse('Internal server error', error, 'INTERNAL_SERVER_ERROR'));
+  }
+});
+
+app.get('/api/favorites', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.userType !== 'user' || !req.user) {
+      return res.status(403).json(createErrorResponse('User access required', null, 'FORBIDDEN'));
+    }
+
+    const limit = parseInt(req.query.limit as string) || 100;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    const result = await pool.query(
+      `SELECT f.*, p.* 
+       FROM favorites f 
+       JOIN properties p ON f.property_id = p.property_id 
+       WHERE f.user_id = $1 
+       ORDER BY f.created_at DESC 
+       LIMIT $2 OFFSET $3`,
+      [req.user.user_id, limit, offset]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json(createErrorResponse('Internal server error', error as Error, 'INTERNAL_SERVER_ERROR'));
   }
 });
 
