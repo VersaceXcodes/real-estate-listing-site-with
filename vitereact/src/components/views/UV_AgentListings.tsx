@@ -6,7 +6,6 @@ import { useAppStore } from '@/store/main';
 import { 
   Home, 
   Building2, 
-  DollarSign, 
   Bed, 
   Bath, 
   Maximize, 

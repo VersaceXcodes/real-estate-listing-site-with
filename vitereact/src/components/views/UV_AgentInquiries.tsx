@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -254,42 +254,6 @@ const UV_AgentInquiries: React.FC = () => {
     },
   });
   
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ inquiry_id, status }: {
-      inquiry_id: string;
-      status: string;
-    }) => {
-      await axios.put(
-        `${API_BASE}/api/inquiries/${inquiry_id}/status`,
-        { status },
-        {
-          headers: {
-            'Authorization': `Bearer ${agentToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-    },
-    onSuccess: (_, variables) => {
-      queryClient.setQueryData<InquiriesResponse>(
-        ['agent-inquiries', filterSettings],
-        (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            data: old.data.map(inquiry =>
-              inquiry.inquiry_id === variables.inquiry_id
-                ? { ...inquiry, status: variables.status as any, updated_at: new Date().toISOString() }
-                : inquiry
-            ),
-          };
-        }
-      );
-      
-      showToast('Inquiry status updated', 'success');
-    },
-  });
-  
   // ============================================================================
   // HANDLERS
   // ============================================================================
@@ -307,14 +271,6 @@ const UV_AgentInquiries: React.FC = () => {
     if (newFilters.date_to) params.date_to = newFilters.date_to;
     
     setSearchParams(params);
-  };
-  
-  const handleStatusFilterChange = (status: string) => {
-    const newStatusArray = filterSettings.status.includes(status)
-      ? filterSettings.status.filter(s => s !== status)
-      : [...filterSettings.status, status];
-    
-    handleFilterChange('status', newStatusArray);
   };
   
   const handleTabChange = (tab: typeof activeTab) => {

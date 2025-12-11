@@ -64,11 +64,9 @@ const UV_Landing: React.FC = () => {
 
   // CRITICAL: Individual selectors, no object destructuring
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
   const savedProperties = useAppStore(state => state.user_favorites.saved_properties);
   const addFavorite = useAppStore(state => state.add_favorite);
   const removeFavorite = useAppStore(state => state.remove_favorite);
-  const showToast = useAppStore(state => state.show_toast);
   const openModal = useAppStore(state => state.open_modal);
 
   // ========== LOCAL STATE ==========

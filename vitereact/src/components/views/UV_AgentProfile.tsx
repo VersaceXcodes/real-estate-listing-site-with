@@ -139,7 +139,6 @@ const UV_AgentProfile: React.FC = () => {
   
   // Global state - Individual selectors (CRITICAL)
   const currentUser = useAppStore(state => state.authentication_state.current_user);
-  const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const showToast = useAppStore(state => state.show_toast);
   
   // Local state

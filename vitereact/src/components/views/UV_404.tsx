@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useAppStore } from '@/store/main';
 import { Home, Search, MapPin, TrendingUp, ArrowRight } from 'lucide-react';
 
 // Type definitions based on propertySchema

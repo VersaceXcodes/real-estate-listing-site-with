@@ -108,7 +108,7 @@ const UV_UserAccount: React.FC = () => {
   }, [isAuthenticated, currentUser, navigate]);
 
   // ========== REACT QUERY: LOAD USER PROFILE ==========
-  const { data: userProfile, isLoading: isLoadingProfile, error: profileError } = useQuery<UserProfile>({
+  const { data: userProfile, isLoading: isLoadingProfile } = useQuery<UserProfile>({
     queryKey: ['user-profile', currentUser?.user_id],
     queryFn: async () => {
       if (!userAuthToken) throw new Error('Not authenticated');

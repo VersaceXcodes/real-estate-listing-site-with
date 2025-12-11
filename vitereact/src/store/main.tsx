@@ -528,13 +528,11 @@ export const useAppStore = create<AppState>()(
         }));
         
         try {
-          const response = await axios.post(
+          await axios.post(
             `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/agent/register`,
             data,
             { headers: { 'Content-Type': 'application/json' } }
           );
-          
-          const { agent } = response.data;
           
           // Agent registration does NOT auto-login (pending approval)
           set((state) => ({
@@ -581,7 +579,6 @@ export const useAppStore = create<AppState>()(
       logout: () => {
         // Determine current user type for API call
         const state = get();
-        const { user_type } = state.authentication_state.authentication_status;
         const token = state.authentication_state.user_auth_token || 
                       state.authentication_state.agent_auth_token || 
                       state.authentication_state.admin_auth_token;
@@ -748,7 +745,7 @@ export const useAppStore = create<AppState>()(
           
         } catch (error) {
           // Token invalid, clear auth state
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: null,
               user_auth_token: null,
@@ -1009,7 +1006,7 @@ export const useAppStore = create<AppState>()(
           
           const property_ids = response.data.data.map((fav: any) => fav.property_id);
           
-          set((state) => ({
+          set(() => ({
             user_favorites: {
               saved_properties: property_ids,
               is_loading: false,
@@ -1197,7 +1194,7 @@ export const useAppStore = create<AppState>()(
             }
           );
           
-          set((state) => ({
+          set(() => ({
             agent_dashboard_state: {
               unread_inquiry_count: response.data.unread_inquiry_count || 0,
               total_active_listings: response.data.total_active_listings || 0,
@@ -1279,7 +1276,7 @@ export const useAppStore = create<AppState>()(
         }));
       },
       
-      open_modal: (modal_name: string, data?: any) => {
+      open_modal: (modal_name: string) => {
         set((state) => ({
           ui_state: {
             ...state.ui_state,

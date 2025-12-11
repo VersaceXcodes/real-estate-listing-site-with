@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
-import { Search, SlidersHorizontal, Grid3x3, List, Map, Heart, Bed, Bath, Maximize, X, ChevronDown, MapPin, DollarSign, Home } from 'lucide-react';
+import { SlidersHorizontal, Grid3x3, List, Map, Heart, Bed, Bath, Maximize, X, ChevronDown, MapPin, DollarSign, Home } from 'lucide-react';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -118,7 +118,6 @@ const fetchProperties = async (filters: SearchFilters): Promise<SearchResponse> 
 
 const UV_SearchResults: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   
   // Global state - CRITICAL: Individual selectors only
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
@@ -189,7 +188,6 @@ const UV_SearchResults: React.FC = () => {
   const totalCount = searchResults?.pagination.total || 0;
   const currentPage = Math.floor((activeFilters.offset / activeFilters.limit) + 1);
   const totalPages = Math.ceil(totalCount / activeFilters.limit);
-  const hasMore = searchResults?.pagination.has_more || false;
   
   // Check if property is saved
   const isPropertySaved = (propertyId: string): boolean => {

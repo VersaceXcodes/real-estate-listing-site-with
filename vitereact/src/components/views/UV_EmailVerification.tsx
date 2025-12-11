@@ -9,7 +9,6 @@ const UV_EmailVerification: React.FC = () => {
   const navigate = useNavigate();
   
   // Local state matching datamap specification
-  const [token, setToken] = useState<string>('');
   const [is_verifying, setIsVerifying] = useState<boolean>(true);
   const [verification_success, setVerificationSuccess] = useState<boolean>(false);
   const [verification_error, setVerificationError] = useState<string | null>(null);
@@ -33,8 +32,6 @@ const UV_EmailVerification: React.FC = () => {
       setCanResend(true);
       return;
     }
-    
-    setToken(urlToken);
     
     // Call verification function from global store
     const performVerification = async () => {

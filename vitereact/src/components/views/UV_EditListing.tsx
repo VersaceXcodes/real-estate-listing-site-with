@@ -117,7 +117,6 @@ const UV_EditListing: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [showChangeHistory, setShowChangeHistory] = useState(false);
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
-  const [newPhotos, setNewPhotos] = useState<File[]>([]);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
 
   // Redirect if not authenticated

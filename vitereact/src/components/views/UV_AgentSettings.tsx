@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '@/store/main';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { AlertCircle, CheckCircle, Eye, EyeOff, Lock, Bell, Trash2, Mail } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Lock, Bell, Trash2, Mail } from 'lucide-react';
 
 // ============================================================================
 // TYPES & INTERFACES

@@ -9,7 +9,6 @@ const UV_AgentRegister: React.FC = () => {
   
   // Individual Zustand selectors
   const registerAgent = useAppStore(state => state.register_agent);
-  const showToast = useAppStore(state => state.show_toast);
   const authLoading = useAppStore(state => state.authentication_state.authentication_status.is_loading);
   const authError = useAppStore(state => state.authentication_state.error_message);
   const clearAuthError = useAppStore(state => state.clear_auth_error);

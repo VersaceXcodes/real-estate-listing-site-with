@@ -13,7 +13,6 @@ const UV_ForgotPassword: React.FC = () => {
   // ========== GLOBAL STORE SELECTORS (INDIVIDUAL SELECTORS) ==========
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const request_password_reset = useAppStore(state => state.request_password_reset);
-  const show_toast = useAppStore(state => state.show_toast);
 
   // ========== NAVIGATION ==========
   const navigate = useNavigate();

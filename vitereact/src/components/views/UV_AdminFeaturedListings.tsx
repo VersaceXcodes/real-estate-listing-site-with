@@ -49,12 +49,7 @@ interface SearchPropertiesResponse {
   };
 }
 
-interface ReorderPayload {
-  listing_order: Array<{
-    property_id: string;
-    featured_order: number;
-  }>;
-}
+
 
 // ============================================================================
 // MAIN COMPONENT
@@ -63,7 +58,6 @@ interface ReorderPayload {
 const UV_AdminFeaturedListings: React.FC = () => {
   // ========== ZUSTAND STATE (Individual Selectors) ==========
   const adminAuthToken = useAppStore(state => state.authentication_state.admin_auth_token);
-  const currentAdmin = useAppStore(state => state.authentication_state.current_admin);
   const showToast = useAppStore(state => state.show_toast);
 
   // ========== LOCAL STATE ==========
@@ -117,8 +111,7 @@ const UV_AdminFeaturedListings: React.FC = () => {
   // Search available properties
   const {
     data: searchResultsData,
-    isLoading: searchLoading,
-    refetch: refetchSearch
+    isLoading: searchLoading
   } = useQuery<SearchPropertiesResponse>({
     queryKey: ['admin-search-properties', searchQuery],
     queryFn: async () => {
@@ -287,7 +280,7 @@ const UV_AdminFeaturedListings: React.FC = () => {
   };
 
   // Drag and drop handlers
-  const handleDragStart = (e: React.DragEvent, propertyId: string, index: number) => {
+  const handleDragStart = (e: React.DragEvent, propertyId: string) => {
     setDraggingPropertyId(propertyId);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.currentTarget.innerHTML);
@@ -492,7 +485,7 @@ const UV_AdminFeaturedListings: React.FC = () => {
                   <div
                     key={property.property_id}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, property.property_id, index)}
+                    onDragStart={(e) => handleDragStart(e, property.property_id)}
                     onDragOver={(e) => handleDragOver(e, index)}
                     onDragLeave={handleDragLeave}
                     onDrop={(e) => handleDrop(e, index)}

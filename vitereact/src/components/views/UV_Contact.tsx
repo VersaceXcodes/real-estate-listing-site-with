@@ -78,7 +78,7 @@ const uploadDocumentAPI = async (formData: FormData, token: string | null) => {
     formData,
     { 
       headers,
-      onUploadProgress: (progressEvent) => {
+      onUploadProgress: () => {
         // Progress tracking handled in component
       }
     }

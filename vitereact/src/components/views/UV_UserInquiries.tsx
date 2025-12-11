@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -129,7 +129,6 @@ const UV_UserInquiries: React.FC = () => {
   const currentUser = useAppStore(state => state.authentication_state.current_user);
   const authToken = useAppStore(state => state.authentication_state.user_auth_token);
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
-  const showToast = useAppStore(state => state.show_toast);
   
   // ========== URL PARAMETERS ==========
   const [searchParams, setSearchParams] = useSearchParams();
@@ -171,8 +170,7 @@ const UV_UserInquiries: React.FC = () => {
   // ========== REACT QUERY - FETCH INQUIRY DETAIL ==========
   const {
     data: inquiryDetailData,
-    isLoading: detailLoading,
-    refetch: refetchDetail
+    isLoading: detailLoading
   } = useQuery({
     queryKey: ['inquiry-detail', inquiryDetailModal.inquiry_id],
     queryFn: () => fetchInquiryDetail(authToken!, inquiryDetailModal.inquiry_id!),

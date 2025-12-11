@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
-import { Heart, Trash2, Filter, Grid3x3, AlertCircle, Home } from 'lucide-react';
+import { Heart, Trash2, Grid3x3, AlertCircle, Home } from 'lucide-react';
 
 // ============================================================================
 // TYPES & INTERFACES (matching Zod schemas)

@@ -1,25 +1,53 @@
-VALIDATION FAILURE - Frontend TypeScript Compilation (Attempt 1/100)
+VALIDATION FAILURE - Frontend TypeScript Compilation (Attempt 2/100)
 
 The project validation failed at the "Frontend TypeScript Compilation" step. You need to analyze the error and fix it.
 
 ## Error Details:
-src/components/views/UV_AdminDashboard.tsx(289,10): error TS17008: JSX element 'main' has no corresponding closing tag.
-src/components/views/UV_AdminDashboard.tsx(734,9): error TS17015: Expected corresponding closing tag for JSX fragment.
-src/components/views/UV_AdminDashboard.tsx(735,5): error TS1109: Expression expected.
-src/components/views/UV_AdminDashboard.tsx(736,5): error TS1109: Expression expected.
-src/components/views/UV_AdminDashboard.tsx(736,7): error TS1109: Expression expected.
-src/components/views/UV_AdminDashboard.tsx(737,3): error TS1109: Expression expected.
-src/components/views/UV_AdminDashboard.tsx(738,1): error TS1128: Declaration or statement expected.
+src/components/views/UV_404.tsx(5,1): error TS6133: 'useAppStore' is declared but its value is never read.
+src/components/views/UV_AdminFeaturedListings.tsx(52,11): error TS6196: 'ReorderPayload' is declared but never used.
+src/components/views/UV_AdminFeaturedListings.tsx(66,9): error TS6133: 'currentAdmin' is declared but its value is never read.
+src/components/views/UV_AdminFeaturedListings.tsx(121,14): error TS6133: 'refetchSearch' is declared but its value is never read.
+src/components/views/UV_AdminFeaturedListings.tsx(290,68): error TS6133: 'index' is declared but its value is never read.
+src/components/views/UV_AgentDashboard.tsx(196,9): error TS6133: 'formatCurrency' is declared but its value is never read.
+src/components/views/UV_AgentInquiries.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/views/UV_AgentInquiries.tsx(257,9): error TS6133: 'updateStatusMutation' is declared but its value is never read.
+src/components/views/UV_AgentInquiries.tsx(312,9): error TS6133: 'handleStatusFilterChange' is declared but its value is never read.
+src/components/views/UV_AgentListings.tsx(9,3): error TS6133: 'DollarSign' is declared but its value is never read.
+src/components/views/UV_AgentProfile.tsx(142,9): error TS6133: 'isAuthenticated' is declared but its value is never read.
+src/components/views/UV_AgentRegister.tsx(12,9): error TS6133: 'showToast' is declared but its value is never read.
+src/components/views/UV_AgentSettings.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/views/UV_AgentSettings.tsx(5,23): error TS6133: 'CheckCircle' is declared but its value is never read.
+src/components/views/UV_Contact.tsx(81,26): error TS6133: 'progressEvent' is declared but its value is never read.
+src/components/views/UV_EditListing.tsx(120,10): error TS6133: 'newPhotos' is declared but its value is never read.
+src/components/views/UV_EditListing.tsx(120,21): error TS6133: 'setNewPhotos' is declared but its value is never read.
+src/components/views/UV_EmailVerification.tsx(12,10): error TS6133: 'token' is declared but its value is never read.
+src/components/views/UV_ForgotPassword.tsx(16,9): error TS6133: 'show_toast' is declared but its value is never read.
+src/components/views/UV_Landing.tsx(67,9): error TS6133: 'currentUser' is declared but its value is never read.
+src/components/views/UV_Landing.tsx(71,9): error TS6133: 'showToast' is declared but its value is never read.
+src/components/views/UV_SavedProperties.tsx(6,25): error TS6133: 'Filter' is declared but its value is never read.
+src/components/views/UV_SearchResults.tsx(6,10): error TS6133: 'Search' is declared but its value is never read.
+src/components/views/UV_SearchResults.tsx(121,9): error TS6133: 'navigate' is declared but its value is never read.
+src/components/views/UV_SearchResults.tsx(192,9): error TS6133: 'hasMore' is declared but its value is never read.
+src/components/views/UV_UserAccount.tsx(111,66): error TS6133: 'profileError' is declared but its value is never read.
+src/components/views/UV_UserInquiries.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/views/UV_UserInquiries.tsx(132,9): error TS6133: 'showToast' is declared but its value is never read.
+src/components/views/UV_UserInquiries.tsx(175,14): error TS6133: 'refetchDetail' is declared but its value is never read.
+src/store/main.tsx(537,17): error TS6133: 'agent' is declared but its value is never read.
+src/store/main.tsx(584,15): error TS6133: 'user_type' is declared but its value is never read.
+src/store/main.tsx(751,16): error TS6133: 'state' is declared but its value is never read.
+src/store/main.tsx(1012,16): error TS6133: 'state' is declared but its value is never read.
+src/store/main.tsx(1200,16): error TS6133: 'state' is declared but its value is never read.
+src/store/main.tsx(1282,40): error TS6133: 'data' is declared but its value is never read.
 
 
 ## Validation Context:
 - Step: Frontend TypeScript Compilation
 - Working Directory: /app/vitereact
-- Attempt: 1/100
-- Previous failures for this step: 1
+- Attempt: 2/100
+- Previous failures for this step: 2
 
 ## Project Memory Summary:
-- Total validation attempts: 6
+- Total validation attempts: 7
 - Common issues encountered: None
 - Known dependencies: @hookform/resolvers, @radix-ui/react-accordion, @radix-ui/react-alert-dialog, @radix-ui/react-aspect-ratio, @radix-ui/react-avatar, @radix-ui/react-checkbox, @radix-ui/react-collapsible, @radix-ui/react-context-menu, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu
 - Missing dependencies: None
@@ -139,6 +167,7 @@ PROTECTED DIRECTORIES (DO NOT MODIFY):
 
 ## Previous Validation Failures for Frontend TypeScript Compilation:
 - 4:45:39 AM: 
+- 4:56:48 AM: 
 
 ## Your Task:
 1. **Analyze the Error**: Understand what specifically went wrong in the Frontend TypeScript Compilation step

@@ -192,15 +192,6 @@ const UV_AgentDashboard: React.FC = () => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
   
-  // Format currency helper
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-  
   // Status badge colors
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
