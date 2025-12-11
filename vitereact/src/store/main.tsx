@@ -566,14 +566,14 @@ export const useAppStore = create<AppState>()(
             data,
             { 
               headers: { 'Content-Type': 'application/json' },
-              timeout: 15000, // Increased timeout to 15 seconds
+              timeout: 15000, // 15 second timeout
               // Explicitly handle response transformation
-              transformResponse: [(data) => {
+              transformResponse: [(responseData) => {
                 try {
-                  return JSON.parse(data);
+                  return JSON.parse(responseData);
                 } catch (e) {
                   console.error('[register_user] Failed to parse response:', e);
-                  return data;
+                  return responseData;
                 }
               }]
             }
@@ -584,8 +584,11 @@ export const useAppStore = create<AppState>()(
           const { user, token } = response.data;
           
           if (!user || !token) {
+            console.error('[register_user] Invalid response - missing user or token:', response.data);
             throw new Error('Invalid response from server: missing user or token');
           }
+          
+          console.log('[register_user] Updating state with user and token...');
           
           // CRITICAL: Set is_loading to false IMMEDIATELY upon successful registration
           // This ensures the UI updates even if subsequent calls fail
@@ -598,23 +601,28 @@ export const useAppStore = create<AppState>()(
                 is_authenticated: true,
                 is_agent_authenticated: false,
                 is_admin_authenticated: false,
-                is_loading: false,
+                is_loading: false, // CRITICAL: Set to false immediately
                 user_type: 'property_seeker',
               },
               error_message: null,
             },
           }));
           
-          console.log('[register_user] State updated successfully');
+          console.log('[register_user] State updated successfully, is_loading set to false');
           
-          // Load user data after registration (non-blocking, with error handling)
+          // Load user data after registration (non-blocking, fire-and-forget with error handling)
           // This happens AFTER setting is_loading to false to prevent UI freeze
-          setTimeout(() => {
-            get().load_user_notification_preferences().catch((error) => {
-              console.error('Failed to load notification preferences after registration:', error);
-              // Continue anyway - user is registered and logged in
-            });
-          }, 100);
+          // Using Promise.resolve to ensure this is truly non-blocking
+          Promise.resolve().then(() => {
+            setTimeout(() => {
+              get().load_user_notification_preferences().catch((error) => {
+                console.error('[register_user] Failed to load notification preferences (non-critical):', error);
+                // Continue anyway - user is registered and logged in
+              });
+            }, 100);
+          });
+          
+          console.log('[register_user] Registration flow completed successfully');
           
         } catch (error: any) {
           console.error('[register_user] Registration failed:', error);
@@ -641,6 +649,8 @@ export const useAppStore = create<AppState>()(
             errorMessage = error.message;
           }
           
+          console.error('[register_user] Setting error state with message:', errorMessage);
+          
           set((state) => ({
             authentication_state: {
               ...state.authentication_state,
@@ -650,7 +660,7 @@ export const useAppStore = create<AppState>()(
                 is_authenticated: false,
                 is_agent_authenticated: false,
                 is_admin_authenticated: false,
-                is_loading: false,
+                is_loading: false, // CRITICAL: Always set to false on error too
                 user_type: 'guest',
               },
               error_message: errorMessage,

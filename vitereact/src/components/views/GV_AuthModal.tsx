@@ -228,6 +228,8 @@ const GV_AuthModal: React.FC<AuthModalProps> = ({
     }
     
     try {
+      console.log('[GV_AuthModal] Starting registration...');
+      
       await registerUser({
         email: registerEmail,
         password: registerPassword,
@@ -235,13 +237,18 @@ const GV_AuthModal: React.FC<AuthModalProps> = ({
         phone_number: phoneNumber || null,
       });
       
+      console.log('[GV_AuthModal] Registration successful, closing modal...');
+      
       // Success - close modal and call success callback
-      handleClose();
-      if (onSuccess) onSuccess();
+      // Use setTimeout to ensure state updates have propagated
+      setTimeout(() => {
+        handleClose();
+        if (onSuccess) onSuccess();
+      }, 100);
       
     } catch (error) {
       // Error is handled in store and displayed via errorMessage
-      console.error('Registration failed:', error);
+      console.error('[GV_AuthModal] Registration failed:', error);
       // Don't close the modal on error - let user see the error and retry
     }
   };
