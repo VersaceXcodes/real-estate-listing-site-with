@@ -25,7 +25,7 @@ function generateUUID() {
 }
 
 // Helper to create test user and get token
-async function createTestUser(userData = {}) {
+async function createTestUser(userData: { email?: string; full_name?: string; phone_number?: string } = {}) {
   const email = userData.email || generateUniqueEmail('user');
   const response = await request(app)
     .post('/api/auth/register')
@@ -45,7 +45,7 @@ async function createTestUser(userData = {}) {
 }
 
 // Helper to create test agent and get token
-async function createTestAgent(agentData = {}) {
+async function createTestAgent(agentData: { email?: string; full_name?: string; phone_number?: string } = {}) {
   const email = agentData.email || generateUniqueEmail('agent');
   const registerResponse = await request(app)
     .post('/api/auth/agent/register')
@@ -86,7 +86,23 @@ async function createTestAgent(agentData = {}) {
 }
 
 // Helper to create test property
-async function createTestProperty(agentToken, propertyData = {}) {
+async function createTestProperty(agentToken: string, propertyData: { 
+  title?: string; 
+  description?: string; 
+  listing_type?: string; 
+  property_type?: string; 
+  status?: string; 
+  price?: number; 
+  address_street?: string; 
+  address_city?: string; 
+  address_state?: string; 
+  address_zip?: string; 
+  bedrooms?: number; 
+  bathrooms?: number; 
+  square_footage?: number;
+  amenities?: string[];
+  highlights?: string[];
+} = {}) {
   const response = await request(app)
     .post('/api/properties')
     .set('Authorization', `Bearer ${agentToken}`)
